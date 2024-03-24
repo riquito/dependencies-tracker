@@ -29,3 +29,7 @@ dist-ssr
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+vite.config.js
+vite.config.d.ts
+tsconfig.node.tsbuildinfo
