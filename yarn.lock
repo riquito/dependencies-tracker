@@ -12,6 +12,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bjorn3/browser_wasi_shim@npm:^0.2.20":
+  version: 0.2.20
+  resolution: "@bjorn3/browser_wasi_shim@npm:0.2.20"
+  checksum: 10c0/263467abd85aed3fb6a16ed15dd0f12f777101a4b0b1ef7bd1cdc327cd2742d7d1a427e69df51c38e148894e7372d69d30add9c53848d426ec858d30e96c8784
+  languageName: node
+  linkType: hard
+
 "@esbuild/aix-ppc64@npm:0.20.2":
   version: 0.20.2
   resolution: "@esbuild/aix-ppc64@npm:0.20.2"
@@ -995,6 +1002,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dependencies-tracker@workspace:."
   dependencies:
+    "@bjorn3/browser_wasi_shim": "npm:^0.2.20"
     "@types/node": "npm:^20.11.30"
     "@types/react": "npm:^18.2.66"
     "@types/react-dom": "npm:^18.2.22"

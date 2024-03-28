@@ -4,6 +4,21 @@ import react from '@vitejs/plugin-react-swc'
 import { glob } from 'glob';
 import { readFileSync } from 'node:fs';
 
+/** @type {import('vite').Plugin} */
+const hexLoader = {
+  name: 'hex-loader',
+  transform(code: string, id: string) {
+    const [path, query] = id.split('?');
+    if (query != 'raw-hex')
+      return null;
+
+    const data = readFileSync(path);
+    const hex = data.toString('hex');
+
+    return `export default '${hex}';`;
+  }
+};
+
 // Find all the lock files inside `lockfiles` using glob
 // and create an object path => content of the lock files
 
@@ -23,6 +38,7 @@ lockfilesPaths.map(path => {
 export default defineConfig({
   plugins: [
     react(),
+    hexLoader,
     ViteEjsPlugin({
       lockFiles: JSON.stringify(lockFiles),
       domain: "hello"
