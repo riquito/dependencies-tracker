@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { WASI, File, Fd, OpenFile, ConsoleStdout, PreopenDirectory, wasi } from "@bjorn3/browser_wasi_shim";
 
-import viteLogo from '/vite.svg'
+// Icon from https://lucide.dev/icons/microscope
+import searchIcon from '/search.svg'
 /* @ts-ignore */
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex'
 import './App.css'
@@ -243,12 +244,7 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-      </div>
-      <h1>Dependencies Tracker</h1>
+      <h1 className="main-title"><img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker</h1>
       <SearchInput onChange={(ev) => {
         const query = ev.target.value.trim();
         setPackageQuery(query);
