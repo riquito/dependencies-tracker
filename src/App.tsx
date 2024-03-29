@@ -41,7 +41,7 @@ type LockFileProps = {
 
 function SearchLockFile({ repo, result }: LockFileProps) {
   return (
-    <details>
+    <details open>
       <summary>{repo}</summary>
       <div>
         <ul>
@@ -213,7 +213,6 @@ async function yarnWhy({ lockFile, query, wasm }: { lockFile: string, query: str
 
 
 function App() {
-  const [count, setCount] = useState(0)
   const [packageQuery, setPackageQuery] = useState('');
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
@@ -251,14 +250,6 @@ function App() {
         setFoundPackages([]);
         setReposWithMaybePackage(getLockfilesWithMaybePackage(lockFiles, query));
       }} />
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
       <ul>
         {foundPackages.map(([repo, result]) => (
           <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery} />
