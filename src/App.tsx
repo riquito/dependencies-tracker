@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { YarnWhyJSONOutput, yarnWhy } from './yarn-why'
+import { RepoFilter } from './repo-filter'
 
 // Icon from https://lucide.dev/icons/microscope
 import searchIcon from '/search.svg'
@@ -76,8 +77,11 @@ function App() {
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
   const [foundPackages, setFoundPackages] = useState<[string, YarnWhyJSONOutput][]>([]);
+  const [filterPanelVisible, setFilterPanelVisible] = useState(false);
+  const [selectedRepos, setSelectedRepos] = useState(new Set<string>(new Set()));
 
   const lockFiles = window.lockFiles;
+  const repositories = Object.keys(lockFiles);
 
   useEffect(() => {
     WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
@@ -106,10 +110,31 @@ function App() {
         setFoundPackages([]);
         setReposWithMaybePackage(getLockfilesWithMaybePackage(lockFiles, query));
       }} />
+
+      {!filterPanelVisible && (
+        <div className="repo-filter-title" >
+          Showing <b>{selectedRepos.size}</b> of <b>{repositories.length}</b> Repositories
+          <button onClick={() => setFilterPanelVisible(true)}>Show filters panel</button>
+        </div>
+      )}
+      {filterPanelVisible && (
+        <RepoFilter
+          repositories={repositories}
+          selectedRepositories={selectedRepos}
+          onChange={(selectedRepos) => {
+            setSelectedRepos(selectedRepos);
+            setFilterPanelVisible(false);
+          }}
+        />
+      )}
       <ul>
-        {foundPackages.map(([repo, result]) => (
-          <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery} />
-        ))}
+        {foundPackages.map(([repo, result]) => {
+          if (selectedRepos.has(repo)) {
+            return <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery} />
+          } else {
+            return null;
+          }
+        })}
       </ul>
     </>
   )
