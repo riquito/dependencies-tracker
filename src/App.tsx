@@ -73,16 +73,16 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
 }
 
 function App() {
+  const lockFiles = window.lockFiles;
+  const repositories = Object.keys(lockFiles);
+
   const [packageQuery, setPackageQuery] = useState('');
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
-  const [selectedRepos, setSelectedRepos] = useState(new Set<string>(new Set()));
+  const [selectedRepos, setSelectedRepos] = useState(new Set<string>(new Set(repositories)));
 
-
-  const lockFiles = window.lockFiles;
-  const repositories = Object.keys(lockFiles);
 
   useEffect(() => {
     WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
@@ -90,16 +90,20 @@ function App() {
 
   useEffect(() => {
     if (packageQuery && wasm && reposWithMaybePackage.length > 0) {
-      Promise.all(reposWithMaybePackage.map<Promise<[string, YarnWhyJSONOutput | null]>>((repo =>
-        yarnWhy({ lockFile: lockFiles[repo], query: packageQuery, wasm }).then((output) => {
-          return [repo, output]
+
+      Promise.all(reposWithMaybePackage
+        .filter(repo => selectedRepos.has(repo))
+        .map<Promise<[string, YarnWhyJSONOutput | null]>>((repo =>
+          yarnWhy({ lockFile: lockFiles[repo], query: packageQuery, wasm }).then((output) => {
+            return [repo, output]
+          })
+        )))
+        .then((pairs: [string, YarnWhyJSONOutput | null][]) => {
+          const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
+          setSearchResult(pairsRepoMatches);
         })
-      ))).then((pairs: [string, YarnWhyJSONOutput | null][]) => {
-        const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
-        setSearchResult(pairsRepoMatches);
-      })
     }
-  }, [wasm, packageQuery, reposWithMaybePackage, lockFiles])
+  }, [wasm, packageQuery, reposWithMaybePackage, lockFiles, selectedRepos])
 
 
   return (
@@ -130,15 +134,14 @@ function App() {
           }}
         />
       )}
-      <ul>
-        {searchResult.map(([repo, result]) => {
-          if (selectedRepos.has(repo)) {
-            return <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery} />
-          } else {
-            return null;
-          }
-        })}
-      </ul>
+      {searchResult.length > 0 && (
+        <div className="search-results">
+          <h3 className="search-results-header">Search Results:</h3>
+          {searchResult.map(([repo, result]) =>
+            <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery} />
+          )}
+        </div>
+      )}
     </>
   )
 }

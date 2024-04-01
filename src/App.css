@@ -32,3 +32,11 @@
 .repo-filter-title button {
   margin-left: 1em;
 }
+
+.search-results {
+  margin-top: 1em;
+}
+
+.search-results-header {
+  color: rgb(223, 210, 113);
+}
