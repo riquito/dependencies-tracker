@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './repo-filter.css'
 
 export type RepoFIlterProps = {
     repositories: string[],
@@ -18,16 +19,20 @@ export function RepoFilter(props: RepoFIlterProps) {
 
     return (
         <div className="repo-filter" >
+            <div className="repo-filter-header">
+                <h3>Repositories
+                    {selected.size === repositories.length
+                        ? <button className="btn-link" onClick={() => setSelected(new Set([]))}>Disable all</button>
+                        : <button className="btn-link" onClick={() => setSelected(new Set(repositories))}>Enable all</button>
+                    }
+                </h3>
+            </div>
             <div className="repo-filter-content" >
-                {selected.size === repositories.length
-                    ? <button onClick={() => setSelected(new Set([]))}>Disable all</button>
-                    : <button onClick={() => setSelected(new Set(repositories))}>Enable all</button>
-                }
                 {
                     props.repositories.map((repo) => {
                         return (
-                            <div className="repo-filter-content-item" key={repo} >
-                                <label style={{ cursor: 'pointer' }} >
+                            <div tabIndex={0} className={`repo-filter-content-item ${selected.has(repo) ? 'enabled' : 'disabled'}`} key={repo} >
+                                <label style={{ cursor: 'pointer' }} title={repo} >
                                     {repo}
                                     <input type="checkbox" id={repo} name={repo} value={repo} checked={selected.has(repo)} onChange={(ev) => {
                                         if (ev.target.checked) {
@@ -42,10 +47,10 @@ export function RepoFilter(props: RepoFIlterProps) {
                         )
                     }
                     )}
-                <button onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
-                    onChange(selected)
-                }}>Apply changes</button>
             </div>
+            <button className="repo-filter-apply-btn" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+                onChange(selected)
+            }}>Apply changes</button>
         </div>
     )
 }

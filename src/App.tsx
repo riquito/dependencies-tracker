@@ -105,12 +105,14 @@ function App() {
   return (
     <>
       <h1 className="main-title"><img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker</h1>
-      <SearchInput onChange={(ev) => {
-        const query = ev.target.value.trim();
-        setPackageQuery(query);
-        setFoundPackages([]);
-        setReposWithMaybePackage(getLockfilesWithMaybePackage(lockFiles, query));
-      }} />
+      <div className="search-bar">
+        <SearchInput onChange={(ev) => {
+          const query = ev.target.value.trim();
+          setPackageQuery(query);
+          setSearchResult([]);
+          setReposWithMaybePackage(getLockfilesWithMaybePackage(lockFiles, query));
+        }} />
+      </div>
 
       {!filterPanelVisible && (
         <div className="repo-filter-title" >

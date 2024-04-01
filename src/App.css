@@ -2,7 +2,6 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 .logo {
@@ -15,4 +14,21 @@
   display: flex;
   justify-items: center;
   gap: 0.3em;
+}
+
+.search-bar {
+  text-align: left;
+  margin-bottom: 1em;
+  font-size: 18px;
+}
+
+.search-bar input[type="text"] {
+  height: 32px;
+  box-sizing: border-box;
+  padding: 0.3em;
+  width: 250px;
+}
+
+.repo-filter-title button {
+  margin-left: 1em;
 }
