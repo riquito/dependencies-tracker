@@ -72,10 +72,12 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
   })
 }
 
-function App() {
-  const lockFiles = window.lockFiles;
-  const repositories = Object.keys(lockFiles);
+export type AppProps = {
+  lockfiles: LockfilesMap;
+}
 
+function App({ lockfiles }: AppProps) {
+  const [repositories] = useState(Object.keys(lockfiles));
   const [packageQuery, setPackageQuery] = useState('');
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
@@ -94,7 +96,7 @@ function App() {
       Promise.all(reposWithMaybePackage
         .filter(repo => selectedRepos.has(repo))
         .map<Promise<[string, YarnWhyJSONOutput | null]>>((repo =>
-          yarnWhy({ lockFile: lockFiles[repo], query: packageQuery, wasm }).then((output) => {
+          yarnWhy({ lockFile: lockfiles[repo], query: packageQuery, wasm }).then((output) => {
             return [repo, output]
           })
         )))
@@ -103,7 +105,7 @@ function App() {
           setSearchResult(pairsRepoMatches);
         })
     }
-  }, [wasm, packageQuery, reposWithMaybePackage, lockFiles, selectedRepos])
+  }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos])
 
 
   return (
@@ -114,7 +116,7 @@ function App() {
           const query = ev.target.value.trim();
           setPackageQuery(query);
           setSearchResult([]);
-          setReposWithMaybePackage(getLockfilesWithMaybePackage(lockFiles, query));
+          setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, query));
         }} />
       </div>
 

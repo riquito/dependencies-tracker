@@ -40,7 +40,7 @@ export default defineConfig({
     react(),
     hexLoader,
     ViteEjsPlugin({
-      lockFiles: JSON.stringify(lockFiles),
+      lockfiles: JSON.stringify(lockFiles),
       domain: "hello"
     }),],
 })
