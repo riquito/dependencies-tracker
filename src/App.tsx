@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { YarnWhyJSONOutput, yarnWhy } from './yarn-why'
+import { YarnWhyJSONOutput, YarnWhyJSONOutputLeaf, yarnWhy } from './yarn-why'
 import { RepoFilter } from './repo-filter'
 
 // Icon from https://lucide.dev/icons/microscope
