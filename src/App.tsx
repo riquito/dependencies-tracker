@@ -76,9 +76,10 @@ function App() {
   const [packageQuery, setPackageQuery] = useState('');
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
-  const [foundPackages, setFoundPackages] = useState<[string, YarnWhyJSONOutput][]>([]);
+  const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState(new Set<string>(new Set()));
+
 
   const lockFiles = window.lockFiles;
   const repositories = Object.keys(lockFiles);
@@ -95,7 +96,7 @@ function App() {
         })
       ))).then((pairs: [string, YarnWhyJSONOutput | null][]) => {
         const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
-        setFoundPackages(pairsRepoMatches);
+        setSearchResult(pairsRepoMatches);
       })
     }
   }, [wasm, packageQuery, reposWithMaybePackage, lockFiles])
@@ -128,7 +129,7 @@ function App() {
         />
       )}
       <ul>
-        {foundPackages.map(([repo, result]) => {
+        {searchResult.map(([repo, result]) => {
           if (selectedRepos.has(repo)) {
             return <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery} />
           } else {
