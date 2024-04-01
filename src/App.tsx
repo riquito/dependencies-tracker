@@ -20,7 +20,7 @@ function SearchInput({ onChange }: SearchInputProps) {
   return (
     <input
       type="text"
-      placeholder="Search..."
+      placeholder="Search for dependencies, e.g. lodash"
       className="input"
       onChange={onChange}
     />
