@@ -109,7 +109,7 @@ function SearchLockFile({ repo, result, packageName }: LockFileProps) {
   const isTargetPackage = (name: string) => name === packageName;
 
   return (
-    <details open className='search-results-item'>
+    <details className='search-results-item'>
       <summary className='search-results-repo-name'>{repo}</summary>
       <div>
         <ul>
@@ -192,7 +192,7 @@ function App({ lockfiles }: AppProps) {
 
       {!filterPanelVisible && (
         <div className="repo-filter-title" >
-          Showing <b>{selectedRepos.size}</b> of <b>{repositories.length}</b> Repositories
+          Search in <b>{selectedRepos.size}</b> of <b>{repositories.length}</b> Repositories
           <button onClick={() => setFilterPanelVisible(true)}>Show filters panel</button>
         </div>
       )}
@@ -206,12 +206,22 @@ function App({ lockfiles }: AppProps) {
           }}
         />
       )}
-      {searchResult.length > 0 && (
+      {packageQuery.length > 0 && (
         <div className="search-results">
-          <h3 className="search-results-header">Search Results:</h3>
+          <h3 className="search-results-header">Search Results</h3>
+          {searchResult.length > 0 && (
+            <div className="search-results-count">
+              <b>{searchResult.reduce((acc, [_, result]) => acc + result.length, 0)}</b> top level dependencies found across <b>{searchResult.length}</b> repositories
+            </div>
+          )}
           {searchResult.map(([repo, result]) =>
             <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery.split(' ')[0]} />
           )}
+          {
+            searchResult.length === 0 && (
+              <div className="search-results-no-results">No results found</div>
+            )
+          }
         </div>
       )}
     </>
