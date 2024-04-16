@@ -26,6 +26,7 @@ const lockfilesPaths = glob.sync('lockfiles/**/*.lock', {
   absolute: false,
   ignore: []
 });
+lockfilesPaths.sort();
 
 const lockFiles: Record<string, string> = {}
 lockfilesPaths.map(path => {
