@@ -40,3 +40,17 @@
 .search-results-header {
   color: rgb(223, 210, 113);
 }
+
+.search-results-repo-name {
+  color: #62a4f9;
+  font-weight: 700;
+}
+
+.target .target-name {
+  color: #0ed45b;
+  font-weight: 700;
+}
+
+.target .target-version {
+  font-weight: 700;
+}

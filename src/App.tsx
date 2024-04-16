@@ -33,18 +33,88 @@ type LockFileProps = {
   packageName: string;
 }
 
-function SearchLockFile({ repo, result }: LockFileProps) {
+const COLORS = Object.values({
+  red: '#f44336',
+  green: '#4caf50',
+  blue: '#2196f3',
+  yellow: '#ffeb3b',
+  purple: '#9c27b0',
+  cyan: '#00bcd4',
+  pink: '#e91e63',
+  orange: '#ff9800',
+  brown: '#da6a42',
+  // gray: '#9e9e9e',
+  // black: '#000000',
+})
+let COLORS_IDX = 2;
+
+const VERSION_TO_COLOR: Record<string, string> = {};
+
+function getColorForVersion(version: string): string {
+  if (version in VERSION_TO_COLOR) {
+    return VERSION_TO_COLOR[version];
+  } else {
+    const color = COLORS[COLORS_IDX];
+    COLORS_IDX = (COLORS_IDX + 1) % COLORS.length;
+    VERSION_TO_COLOR[version] = color;
+    return color;
+  }
+}
+
+function parseDescriptor(descriptor: string): { name: string, version: string } {
+  let startIdx = 0;
+
+  // skip leading @, if present
+  if (descriptor.startsWith('@')) {
+    startIdx = 1;
+  }
+
+  const versionSepIdx = descriptor.indexOf('@', startIdx);
+  const name = descriptor.substring(startIdx, versionSepIdx);
+  const version = descriptor.substring(versionSepIdx + 1);
+
+  return { name, version }
+}
+
+function renderTarget({ name, version }: { name: string, version: string }) {
   return (
-    <details open>
-      <summary>{repo}</summary>
+    <span className="target">
+      <span className='target-name'>{name}</span>@<span className='target-version' style={{ color: getColorForVersion(version) }}>{version}</span>
+    </span>
+  )
+}
+
+function renderDescriptor(descriptor: string, isTargetPackage: IsTargetPackage) {
+  const { name, version } = parseDescriptor(descriptor);
+
+  return (
+    <span className={`descriptor`}>
+      {isTargetPackage(name) ? renderTarget({ name, version }) : descriptor}
+    </span>
+  )
+}
+
+type IsTargetPackage = (s: string) => boolean;
+
+function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTargetPackage) {
+  return (
+    <li key={node.descriptor}>
+      {renderDescriptor(node.descriptor, isTargetPackage)}
+      {node.children && <ul>{node.children.map(n => renderDependencyRow(n, isTargetPackage))}</ul>}
+    </li>
+  )
+}
+
+function SearchLockFile({ repo, result, packageName }: LockFileProps) {
+  const isTargetPackage = (name: string) => name === packageName;
+
+  return (
+    <details open className='search-results-item'>
+      <summary className='search-results-repo-name'>{repo}</summary>
       <div>
         <ul>
           {result.map((node: YarnWhyJSONOutputLeaf) => {
-            return (
-              <li key={node.descriptor}>
-                {node.descriptor}
-              </li>
-            )
+            return renderDependencyRow(node, isTargetPackage)
           })}
         </ul>
       </div>
@@ -140,7 +210,7 @@ function App({ lockfiles }: AppProps) {
         <div className="search-results">
           <h3 className="search-results-header">Search Results:</h3>
           {searchResult.map(([repo, result]) =>
-            <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery} />
+            <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery.split(' ')[0]} />
           )}
         </div>
       )}

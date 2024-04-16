@@ -22,7 +22,7 @@
     width: 120px;
     max-width: 120px;
     box-sizing: border-box;
-    border: 1px solid green;
+    /* border: 1px solid green; */
     white-space: nowrap;
     overflow: hidden;
     cursor: pointer;
@@ -47,8 +47,14 @@
 }
 
 .repo-filter-content-item.enabled {
-    background: linear-gradient(to top, rgb(140, 167, 140), rgb(198, 225, 198));
+    background-color: #3f51b5;
+    border: 1px solid transparent;
+    box-shadow:
+        0 3px 1px -2px rgba(0, 0, 0, .2),
+        0 2px 2px 0 rgba(0, 0, 0, .14),
+        0 1px 5px 0 rgba(0, 0, 0, .12);
     font-weight: 700;
+    color: #FFF;
 }
 
 
