@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { YarnWhyJSONOutput, YarnWhyJSONOutputLeaf, yarnWhy } from './yarn-why'
 import { RepoFilter } from './repo-filter'
 
@@ -13,17 +13,32 @@ const fromHexString = (hexString: string): ArrayBuffer =>
 
 
 type SearchInputProps = {
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onSubmit: (query: string) => void;
 }
 
-function SearchInput({ onChange }: SearchInputProps) {
+function SearchInput({ onSubmit }: SearchInputProps) {
+  const ref = useRef<HTMLInputElement>(null)
   return (
-    <input
-      type="text"
-      placeholder="Search for dependencies, e.g. lodash"
-      className="input"
-      onChange={onChange}
-    />
+    <div className="search-input">
+      <input
+        ref={ref}
+        type="text"
+        placeholder="Search for dependencies, e.g. react"
+        className="input"
+        onKeyUp={(ev) => {
+          const value = ev.currentTarget.value.trim();
+          if (ev.key === 'Enter' && value.length > 0) {
+            onSubmit(value);
+          }
+        }}
+      />
+      <button onClick={() => {
+        const value = ref.current!.value.trim();
+        if (value.length > 0) {
+          onSubmit(value);
+        }
+      }}>Search</button>
+    </div>
   )
 }
 
@@ -162,7 +177,6 @@ function App({ lockfiles }: AppProps) {
 
   useEffect(() => {
     if (packageQuery && wasm && reposWithMaybePackage.length > 0) {
-
       Promise.all(reposWithMaybePackage
         .filter(repo => selectedRepos.has(repo))
         .map<Promise<[string, YarnWhyJSONOutput | null]>>((repo =>
@@ -181,14 +195,6 @@ function App({ lockfiles }: AppProps) {
   return (
     <>
       <h1 className="main-title"><img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker</h1>
-      <div className="search-bar">
-        <SearchInput onChange={(ev) => {
-          const query = ev.target.value.trim();
-          setPackageQuery(query);
-          setSearchResult([]);
-          setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, query));
-        }} />
-      </div>
 
       {!filterPanelVisible && (
         <div className="repo-filter-title" >
@@ -206,6 +212,21 @@ function App({ lockfiles }: AppProps) {
           }}
         />
       )}
+
+      <div className="search-bar">
+        <SearchInput onSubmit={(query) => {
+          const packageName = query ? query.split(' ')[0] : '';
+          setPackageQuery(query);
+          setSearchResult([]);
+          setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
+        }} />
+        <div className='search-examples'>
+          <div className='example'>{"e.g. react"}</div>
+          <div className='example'>{"e.g. react ^19.0.0"}</div>
+          <div className='example'>{"e.g. react >=15.0.0, <20.0.0"}</div>
+        </div>
+      </div>
+
       {packageQuery.length > 0 && (
         <div className="search-results">
           <h3 className="search-results-header">Search Results</h3>

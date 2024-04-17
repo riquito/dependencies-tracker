@@ -22,11 +22,28 @@
   font-size: 18px;
 }
 
-.search-bar input[type="text"] {
+.search-input {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+}
+
+.search-input input[type="text"] {
   height: 32px;
   box-sizing: border-box;
   padding: 0.3em;
   width: 250px;
+}
+
+.search-bar .search-examples {
+  font-size: 80%;
+  padding: 0 0.5em;
+  color: #b3b1ae;
+}
+
+.repo-filter-title {
+  margin-bottom: 1em;
 }
 
 .repo-filter-title button {
