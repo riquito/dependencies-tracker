@@ -14,7 +14,7 @@ export function RepoFilter(props: RepoFIlterProps) {
         onChange,
     } = props;
 
-    const [selected, setSelected] = useState(selectedRepositories);
+    const [selected, setSelected] = useState(new Set(selectedRepositories));
 
 
     return (
@@ -25,6 +25,9 @@ export function RepoFilter(props: RepoFIlterProps) {
                         ? <button className="btn-link" onClick={() => setSelected(new Set([]))}>Disable all</button>
                         : <button className="btn-link" onClick={() => setSelected(new Set(repositories))}>Enable all</button>
                     }
+                    <button className="repo-filter-cancel-btn secondary" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+                        onChange(new Set([]))
+                    }}>Cancel</button>
                 </h3>
             </div>
             <div className="repo-filter-content" >
@@ -48,6 +51,9 @@ export function RepoFilter(props: RepoFIlterProps) {
                     }
                     )}
             </div>
+            <button className="repo-filter-cancel-btn secondary" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+                onChange(new Set([]))
+            }}>Cancel</button>
             <button className="repo-filter-apply-btn" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
                 onChange(selected)
             }}>Apply changes</button>

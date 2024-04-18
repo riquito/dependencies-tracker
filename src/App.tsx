@@ -190,7 +190,9 @@ function App({ lockfiles }: AppProps) {
           repositories={repositories}
           selectedRepositories={selectedRepos}
           onChange={(selectedRepos) => {
-            setSelectedRepos(selectedRepos);
+            if (selectedRepos.size > 0) {
+              setSelectedRepos(selectedRepos);
+            }
             setFilterPanelVisible(false);
           }}
         />
