@@ -26,19 +26,11 @@ class ConsoleExhaust extends Fd {
         return { ret: 0, fdstat };
     }
 
-    fd_write(
-        view8: Uint8Array,
-        iovs: Array<wasi.Ciovec>,
-    ): { ret: number; nwritten: number } {
-        let nwritten = 0;
-        for (const iovec of iovs) {
-            const buffer = view8.slice(iovec.buf, iovec.buf + iovec.buf_len);
-            //this.write(buffer);
-            this.buffer.push(buffer);
-            nwritten += iovec.buf_len;
-        }
-        return { ret: 0, nwritten };
+    fd_write(data: Uint8Array): { ret: number; nwritten: number } {
+        this.buffer.push(data);
+        return { ret: 0, nwritten: data.byteLength };
     }
+
     fd_close(): number {
         // Get the total length of all arrays.
         const length = this.buffer.reduce((a, b) => a + b.length, 0);
