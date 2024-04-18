@@ -76,21 +76,6 @@ function getColorForVersion(version: string): string {
   }
 }
 
-function parseDescriptor(descriptor: string): { name: string, version: string } {
-  let startIdx = 0;
-
-  // skip leading @, if present
-  if (descriptor.startsWith('@')) {
-    startIdx = 1;
-  }
-
-  const versionSepIdx = descriptor.indexOf('@', startIdx);
-  const name = descriptor.substring(startIdx, versionSepIdx);
-  const version = descriptor.substring(versionSepIdx + 1);
-
-  return { name, version }
-}
-
 function renderTarget({ name, version }: { name: string, version: string }) {
   return (
     <span className="target">
@@ -99,12 +84,10 @@ function renderTarget({ name, version }: { name: string, version: string }) {
   )
 }
 
-function renderDescriptor(descriptor: string, isTargetPackage: IsTargetPackage) {
-  const { name, version } = parseDescriptor(descriptor);
-
+function renderDescriptor([name, version]: [string, string], isTargetPackage: IsTargetPackage) {
   return (
     <span className={`descriptor`}>
-      {isTargetPackage(name) ? renderTarget({ name, version }) : descriptor}
+      {isTargetPackage(name) ? renderTarget({ name, version }) : `${name}@${version}`}
     </span>
   )
 }
@@ -113,7 +96,7 @@ type IsTargetPackage = (s: string) => boolean;
 
 function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTargetPackage) {
   return (
-    <li key={node.descriptor}>
+    <li key={node.descriptor.join('@')}>
       {renderDescriptor(node.descriptor, isTargetPackage)}
       {node.children && <ul>{node.children.map(n => renderDependencyRow(n, isTargetPackage))}</ul>}
     </li>

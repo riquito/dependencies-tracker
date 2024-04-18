@@ -51,7 +51,7 @@ class ConsoleExhaust extends Fd {
 
 
 export type YarnWhyJSONOutputLeaf = {
-    descriptor: string,
+    descriptor: [string, string],
     children: YarnWhyJSONOutputLeaf[]
 }
 
@@ -61,7 +61,11 @@ export async function yarnWhy({ lockFile, query, wasm }: { lockFile: string, que
     let output = ''
     let err_output = ''
 
-    const args = ["yarn-why", '--json', query];
+    const [packageName, ...rest] = query.split(' ')
+    const version = rest.join(' ')
+
+    const args = ["yarn-why", '--json', packageName, ...(version ? [version] : [])];
+
     const env: string[] = [];
     const fds = [
         new OpenFile(new File(new TextEncoder().encode(lockFile))), // stdin
