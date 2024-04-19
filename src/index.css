@@ -13,6 +13,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+.blink_me {
+  animation: blinker 1s linear 3;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+    color: gold;
+  }
+}
+
 a,
 .btn-link {
   font-weight: 500;

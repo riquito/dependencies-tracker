@@ -84,21 +84,34 @@ function renderTarget({ name, version }: { name: string, version: string }) {
   )
 }
 
-function renderDescriptor([name, version]: [string, string], isTargetPackage: IsTargetPackage) {
+function renderDescriptor([name, version]: [string, string], isTargetPackage: IsTargetPackage, repo: string, isLeaf: boolean) {
+  const id = `${repo}:${name}@${version}`
+  const text = `${name}@${version}`
+
   return (
-    <span className={`descriptor`}>
-      {isTargetPackage(name) ? renderTarget({ name, version }) : `${name}@${version}`}
+    <span className={`descriptor`} id={id}>
+      {isTargetPackage(name) ? renderTarget({ name, version }) : (isLeaf ? (
+        <a href={`#${id}`} onClick={(ev) => {
+          const targetId = ev.currentTarget.getAttribute('href')!.slice(1)
+          const anchor = document.getElementById(targetId)!;
+          anchor.classList.remove('blink_me');
+          anchor.offsetHeight; // force repaint to trigger repaint and set `animation-name: none;`
+          anchor.classList.add('blink_me');
+        }}>
+          {text}
+        </a>
+      ) : text)}
     </span>
   )
 }
 
 type IsTargetPackage = (s: string) => boolean;
 
-function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTargetPackage) {
+function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTargetPackage, repo: string) {
   return (
     <li key={node.descriptor.join('@')}>
-      {renderDescriptor(node.descriptor, isTargetPackage)}
-      {node.children && <ul>{node.children.map(n => renderDependencyRow(n, isTargetPackage))}</ul>}
+      {renderDescriptor(node.descriptor, isTargetPackage, repo, !(node.children && node.children.length > 0))}
+      {node.children && <ul>{node.children.map(n => renderDependencyRow(n, isTargetPackage, repo))}</ul>}
     </li>
   )
 }
@@ -112,7 +125,7 @@ function SearchLockFile({ repo, result, packageName }: LockFileProps) {
       <div>
         <ul>
           {result.map((node: YarnWhyJSONOutputLeaf) => {
-            return renderDependencyRow(node, isTargetPackage)
+            return renderDependencyRow(node, isTargetPackage, repo)
           })}
         </ul>
       </div>

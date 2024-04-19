@@ -52,7 +52,7 @@ class ConsoleExhaust extends Fd {
 
 export type YarnWhyJSONOutputLeaf = {
     descriptor: [string, string],
-    children: YarnWhyJSONOutputLeaf[]
+    children?: YarnWhyJSONOutputLeaf[]
 }
 
 export type YarnWhyJSONOutput = YarnWhyJSONOutputLeaf[]
@@ -88,8 +88,8 @@ export async function yarnWhy({ lockFile, query, wasm }: { lockFile: string, que
     // so we need to close them manually (see FIXME v0.3 in @bjorn3/browser_wasi_shim)
     fds.forEach(fd => fd.fd_close());
 
-    // output now is not empty because the file descriptor is closed
-    // and it's handler was called synchronously
+    // "output" here is not empty because the file descriptors were closed
+    // and their handler called synchronously.
 
     if (exit_code !== 0) {
         if (output === 'Package not found\n') {
