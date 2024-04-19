@@ -27,16 +27,14 @@ function SearchInput({ onSubmit }: SearchInputProps) {
         className="input"
         onKeyUp={(ev) => {
           const value = ev.currentTarget.value.trim();
-          if (ev.key === 'Enter' && value.length > 0) {
+          if (ev.key === 'Enter') {
             onSubmit(value);
           }
         }}
       />
       <button onClick={() => {
         const value = ref.current!.value.trim();
-        if (value.length > 0) {
-          onSubmit(value);
-        }
+        onSubmit(value);
       }}>Search</button>
     </div>
   )
