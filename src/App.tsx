@@ -186,13 +186,19 @@ function App({ lockfiles }: AppProps) {
   }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos])
 
 
+  let t0 = performance.now();
   return (
     <>
       <h1 className="main-title"><img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker</h1>
 
       {!filterPanelVisible && (
         <div className="repo-filter-title" >
-          Search in <b>{selectedRepos.size}</b> of <b>{repositories.length}</b> Repositories
+          {selectedRepos.size === repositories.length
+            ? 'Search in all repositories'
+            : (
+              <>Search in <b>{selectedRepos.size}</b> out of <b>{repositories.length}</b> repositories</>
+            )
+          }
           <button onClick={() => setFilterPanelVisible(true)}>Show filters panel</button>
         </div>
       )}
@@ -226,6 +232,7 @@ function App({ lockfiles }: AppProps) {
       {packageQuery.length > 0 && (
         <div className="search-results">
           <h3 className="search-results-header">Search Results</h3>
+          <div>Query: <b>{packageQuery}</b></div>
           {searchResult.length > 0 && (
             <div className="search-results-count">
               <b>{searchResult.reduce((acc, [_, result]) => acc + result.length, 0)}</b> top level dependencies found across <b>{searchResult.length}</b> repositories

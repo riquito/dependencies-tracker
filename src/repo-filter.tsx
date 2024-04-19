@@ -54,7 +54,7 @@ export function RepoFilter(props: RepoFIlterProps) {
             <button className="repo-filter-cancel-btn secondary" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
                 onChange(new Set([]))
             }}>Cancel</button>
-            <button className="repo-filter-apply-btn" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+            <button className="repo-filter-apply-btn" disabled={selected.size === 0} onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
                 onChange(selected)
             }}>Apply changes</button>
         </div>
