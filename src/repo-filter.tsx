@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './repo-filter.css'
 
 export type RepoFIlterProps = {
@@ -16,10 +16,17 @@ export function RepoFilter(props: RepoFIlterProps) {
     repositories.sort((a, b) => a.split('/')[1].localeCompare(b.split('/')[1]));
 
     const [selected, setSelected] = useState(new Set(selectedRepositories));
+    const ref = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (ref.current) {
+            (ref.current.querySelectorAll('button.repo-filter-cancel-btn')[0] as HTMLButtonElement).focus()
+        }
+    }, [])
 
 
     return (
-        <div className="repo-filter" >
+        <div className="repo-filter" ref={ref}>
             <div className="repo-filter-header">
                 <h3>Repositories
                     {selected.size === repositories.length
@@ -35,9 +42,9 @@ export function RepoFilter(props: RepoFIlterProps) {
                 {
                     repositories.map((repo) => {
                         return (
-                            <div tabIndex={0} className={`repo-filter-content-item ${selected.has(repo) ? 'enabled' : 'disabled'}`} key={repo} >
+                            <div className={`repo-filter-content-item ${selected.has(repo) ? 'enabled' : 'disabled'}`} key={repo} >
                                 <label style={{ cursor: 'pointer' }} title={repo} >
-                                    <input type="checkbox" id={repo} name={repo} value={repo} checked={selected.has(repo)} onChange={(ev) => {
+                                    <input tabIndex={0} type="checkbox" id={repo} name={repo} value={repo} checked={selected.has(repo)} onChange={(ev) => {
                                         if (ev.target.checked) {
                                             selected.add(repo);
                                         } else {

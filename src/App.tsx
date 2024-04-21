@@ -189,17 +189,15 @@ function App({ lockfiles }: AppProps) {
     <>
       <h1 className="main-title"><img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker</h1>
 
-      {!filterPanelVisible && (
-        <div className="repo-filter-title" >
-          {selectedRepos.size === repositories.length
-            ? 'Search in all repositories'
-            : (
-              <>Search in <b>{selectedRepos.size}</b> out of <b>{repositories.length}</b> repositories</>
-            )
-          }
-          <button onClick={() => setFilterPanelVisible(true)}>Show filters panel</button>
-        </div>
-      )}
+      <div className="repo-filter-title" style={{ display: filterPanelVisible ? 'none' : 'block' }}>
+        {selectedRepos.size === repositories.length
+          ? 'Search in all repositories'
+          : (
+            <>Search in <b>{selectedRepos.size}</b> out of <b>{repositories.length}</b> repositories</>
+          )
+        }
+        <button id="openFilterPanelButton" onClick={() => setFilterPanelVisible(true)}>Show filters panel</button>
+      </div>
       {filterPanelVisible && (
         <RepoFilter
           repositories={repositories}
@@ -209,6 +207,10 @@ function App({ lockfiles }: AppProps) {
               setSelectedRepos(selectedRepos);
             }
             setFilterPanelVisible(false);
+            setTimeout(() => {
+              document.getElementById('openFilterPanelButton')!.focus();
+            }, 30)
+
           }}
         />
       )}
