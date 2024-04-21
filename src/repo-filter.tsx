@@ -9,10 +9,11 @@ export type RepoFIlterProps = {
 
 export function RepoFilter(props: RepoFIlterProps) {
     const {
-        repositories,
         selectedRepositories,
         onChange,
     } = props;
+    let repositories = [...props.repositories];
+    repositories.sort((a, b) => a.split('/')[1].localeCompare(b.split('/')[1]));
 
     const [selected, setSelected] = useState(new Set(selectedRepositories));
 
@@ -32,11 +33,10 @@ export function RepoFilter(props: RepoFIlterProps) {
             </div>
             <div className="repo-filter-content" >
                 {
-                    props.repositories.map((repo) => {
+                    repositories.map((repo) => {
                         return (
                             <div tabIndex={0} className={`repo-filter-content-item ${selected.has(repo) ? 'enabled' : 'disabled'}`} key={repo} >
                                 <label style={{ cursor: 'pointer' }} title={repo} >
-                                    {repo}
                                     <input type="checkbox" id={repo} name={repo} value={repo} checked={selected.has(repo)} onChange={(ev) => {
                                         if (ev.target.checked) {
                                             selected.add(repo);
@@ -45,6 +45,7 @@ export function RepoFilter(props: RepoFIlterProps) {
                                         }
                                         setSelected(new Set(selected));
                                     }} />
+                                    {repo.split('/')[1]}
                                 </label>
                             </div>
                         )

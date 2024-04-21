@@ -185,8 +185,6 @@ function App({ lockfiles }: AppProps) {
     }
   }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos])
 
-
-  let t0 = performance.now();
   return (
     <>
       <h1 className="main-title"><img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker</h1>
