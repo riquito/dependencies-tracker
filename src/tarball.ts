@@ -1,9 +1,7 @@
 // Copied from https://raw.githubusercontent.com/ankitrohatgi/tarballjs/29b6e87/tarball.js
 // I copied it because it was not updated in a couple years and it was risky
 // to have a dependency with few eyes on the updates.
-// There are a couple edits:
-// - ES6 modules only (no commonjs support)
-// - refactored in typescript
+// There is a major edit: is refactored to typescript
 
 // MIT License
 
@@ -27,16 +25,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+export type FileInfo = {
+    "name": string,
+    "type": string,
+    "size": number,
+    "header_offset": number
+}
+
 export class TarReader {
+    fileInfo: FileInfo[] = [];
+    buffer: ArrayBuffer;
+
     constructor() {
         this.fileInfo = [];
+        this.buffer = new ArrayBuffer(0)
     }
 
-    readFile(file) {
-        return new Promise((resolve, reject) => {
+    readFile(file: Blob): Promise<FileInfo[]> {
+        return new Promise((resolve) => {
             let reader = new FileReader();
             reader.onload = (event) => {
-                this.buffer = event.target.result;
+                this.buffer = (event.target!.result! as ArrayBuffer);
                 this.fileInfo = [];
                 this._readFileInfo();
                 resolve(this.fileInfo);
@@ -45,7 +54,7 @@ export class TarReader {
         });
     }
 
-    readArrayBuffer(arrayBuffer) {
+    readArrayBuffer(arrayBuffer: ArrayBuffer) {
         this.buffer = arrayBuffer;
         this.fileInfo = [];
         this._readFileInfo();
@@ -84,19 +93,19 @@ export class TarReader {
         return this.fileInfo;
     }
 
-    _readString(str_offset, size) {
+    _readString(str_offset: number, size: number) {
         let strView = new Uint8Array(this.buffer, str_offset, size);
         let i = strView.indexOf(0);
         let td = new TextDecoder();
         return td.decode(strView.slice(0, i));
     }
 
-    _readFileName(header_offset) {
+    _readFileName(header_offset: number) {
         let name = this._readString(header_offset, 100);
         return name;
     }
 
-    _readFileType(header_offset) {
+    _readFileType(header_offset: number) {
         // offset: 156
         let typeView = new Uint8Array(this.buffer, header_offset + 156, 1);
         let typeStr = String.fromCharCode(typeView[0]);
@@ -109,7 +118,7 @@ export class TarReader {
         }
     }
 
-    _readFileSize(header_offset) {
+    _readFileSize(header_offset: number) {
         // offset: 124
         let szView = new Uint8Array(this.buffer, header_offset + 124, 12);
         let szStr = "";
@@ -119,38 +128,38 @@ export class TarReader {
         return parseInt(szStr, 8);
     }
 
-    _readFileBlob(file_offset, size, mimetype) {
+    _readFileBlob(file_offset: number, size: number, mimetype: string) {
         let view = new Uint8Array(this.buffer, file_offset, size);
         let blob = new Blob([view], { "type": mimetype });
         return blob;
     }
 
-    _readFileBinary(file_offset, size) {
+    _readFileBinary(file_offset: number, size: number) {
         let view = new Uint8Array(this.buffer, file_offset, size);
         return view;
     }
 
-    _readTextFile(file_offset, size) {
+    _readTextFile(file_offset: number, size: number) {
         let view = new Uint8Array(this.buffer, file_offset, size);
         let td = new TextDecoder();
         return td.decode(view);
     }
 
-    getTextFile(file_name) {
+    getTextFile(file_name: string) {
         let info = this.fileInfo.find(info => info.name == file_name);
         if (info) {
             return this._readTextFile(info.header_offset + 512, info.size);
         }
     }
 
-    getFileBlob(file_name, mimetype) {
+    getFileBlob(file_name: string, mimetype: string) {
         let info = this.fileInfo.find(info => info.name == file_name);
         if (info) {
             return this._readFileBlob(info.header_offset + 512, info.size, mimetype);
         }
     }
 
-    getFileBinary(file_name) {
+    getFileBinary(file_name: string) {
         let info = this.fileInfo.find(info => info.name == file_name);
         if (info) {
             return this._readFileBinary(info.header_offset + 512, info.size);
@@ -158,12 +167,28 @@ export class TarReader {
     }
 };
 
+export type FileType = 'file' | 'directory'
+
+export type FileData = {
+    "name": string,
+    "array": Uint8Array,
+    "file": Blob,
+    "type": FileType,
+    "size": number,
+    "dataType": string,
+    "opts": any
+}
+
 export class TarWriter {
+    buffer: ArrayBuffer;
+    fileData: FileData[] = []
+
     constructor() {
+        this.buffer = new ArrayBuffer(0);
         this.fileData = [];
     }
 
-    addTextFile(name, text, opts) {
+    addTextFile(name: string, text: string, opts: any) {
         let te = new TextEncoder();
         let arr = te.encode(text);
         this.fileData.push({
@@ -172,11 +197,12 @@ export class TarWriter {
             type: "file",
             size: arr.length,
             dataType: "array",
-            opts: opts
+            file: new Blob(),
+            opts: opts,
         });
     }
 
-    addFileArrayBuffer(name, arrayBuffer, opts) {
+    addFileArrayBuffer(name: string, arrayBuffer: ArrayBuffer, opts: any) {
         let arr = new Uint8Array(arrayBuffer);
         this.fileData.push({
             name: name,
@@ -184,28 +210,32 @@ export class TarWriter {
             type: "file",
             size: arr.length,
             dataType: "array",
-            opts: opts
+            file: new Blob(),
+            opts: opts,
         });
     }
 
-    addFile(name, file, opts) {
+    addFile(name: string, file: Blob, opts: any) {
         this.fileData.push({
             name: name,
             file: file,
             size: file.size,
             type: "file",
             dataType: "file",
-            opts: opts
+            opts: opts,
+            array: new Uint8Array(),
         });
     }
 
-    addFolder(name, opts) {
+    addFolder(name: string, opts: any) {
         this.fileData.push({
             name: name,
             type: "directory",
             size: 0,
             dataType: "none",
-            opts: opts
+            opts: opts,
+            array: new Uint8Array(),
+            file: new Blob(),
         });
     }
 
@@ -225,7 +255,7 @@ export class TarWriter {
         this.buffer = new ArrayBuffer(bufSize);
     }
 
-    async download(filename) {
+    async download(filename: string) {
         let blob = await this.writeBlob();
         let $downloadElem = document.createElement('a');
         $downloadElem.href = URL.createObjectURL(blob);
@@ -236,12 +266,12 @@ export class TarWriter {
         document.body.removeChild($downloadElem);
     }
 
-    async writeBlob(onUpdate) {
+    async writeBlob(onUpdate?: (progress: number) => void) {
         return new Blob([await this.write(onUpdate)], { "type": "application/x-tar" });
     }
 
-    write(onUpdate) {
-        return new Promise((resolve, reject) => {
+    write(onUpdate?: (progress: number) => void): Promise<Uint8Array> {
+        return new Promise((resolve) => {
             this._createBuffer();
             let offset = 0;
             let filesAdded = 0;
@@ -277,7 +307,7 @@ export class TarWriter {
                     reader.onload = (function (outArray) {
                         let dArray = outArray;
                         return function (event) {
-                            let sbuf = event.target.result;
+                            let sbuf = (event.target!.result! as ArrayBuffer);
                             let sarr = new Uint8Array(sbuf);
                             for (let bIdx = 0; bIdx < sarr.length; bIdx++) {
                                 dArray[bIdx] = sarr[bIdx];
@@ -298,7 +328,7 @@ export class TarWriter {
         });
     }
 
-    _writeString(str, offset, size) {
+    _writeString(str: string, offset: number, size: number) {
         let strView = new Uint8Array(this.buffer, offset, size);
         let te = new TextEncoder();
         if (te.encodeInto) {
@@ -316,12 +346,12 @@ export class TarWriter {
         }
     }
 
-    _writeFileName(name, header_offset) {
+    _writeFileName(name: string, header_offset: number) {
         // offset: 0
         this._writeString(name, header_offset, 100);
     }
 
-    _writeFileType(typeStr, header_offset) {
+    _writeFileType(typeStr: FileType, header_offset: number) {
         // offset: 156
         let typeChar = "0";
         if (typeStr === "file") {
@@ -333,14 +363,14 @@ export class TarWriter {
         typeView[0] = typeChar.charCodeAt(0);
     }
 
-    _writeFileSize(size, header_offset) {
+    _writeFileSize(size: number, header_offset: number) {
         // offset: 124
         let sz = size.toString(8);
         sz = this._leftPad(sz, 11);
         this._writeString(sz, header_offset + 124, 12);
     }
 
-    _leftPad(number, targetLength) {
+    _leftPad(number: number | string, targetLength: number) {
         let output = number + '';
         while (output.length < targetLength) {
             output = '0' + output;
@@ -348,37 +378,37 @@ export class TarWriter {
         return output;
     }
 
-    _writeFileMode(mode, header_offset) {
+    _writeFileMode(mode: number, header_offset: number) {
         // offset: 100
         this._writeString(this._leftPad(mode, 7), header_offset + 100, 8);
     }
 
-    _writeFileUid(uid, header_offset) {
+    _writeFileUid(uid: number, header_offset: number) {
         // offset: 108
         this._writeString(this._leftPad(uid, 7), header_offset + 108, 8);
     }
 
-    _writeFileGid(gid, header_offset) {
+    _writeFileGid(gid: number, header_offset: number) {
         // offset: 116
         this._writeString(this._leftPad(gid, 7), header_offset + 116, 8);
     }
 
-    _writeFileMtime(mtime, header_offset) {
+    _writeFileMtime(mtime: number, header_offset: number) {
         // offset: 136
         this._writeString(this._leftPad(mtime, 11), header_offset + 136, 12);
     }
 
-    _writeFileUser(user, header_offset) {
+    _writeFileUser(user: string, header_offset: number) {
         // offset: 265
         this._writeString(user, header_offset + 265, 32);
     }
 
-    _writeFileGroup(group, header_offset) {
+    _writeFileGroup(group: string, header_offset: number) {
         // offset: 297
         this._writeString(group, header_offset + 297, 32);
     }
 
-    _writeChecksum(header_offset) {
+    _writeChecksum(header_offset: number) {
         // offset: 148
         this._writeString("        ", header_offset + 148, 8); // first fill with spaces
 
@@ -391,7 +421,7 @@ export class TarWriter {
         this._writeString(chksum.toString(8), header_offset + 148, 8);
     }
 
-    _getOpt(opts, opname, defaultVal) {
+    _getOpt(opts: any, opname: string, defaultVal: any): any {
         if (opts != null) {
             if (opts[opname] != null) {
                 return opts[opname];
@@ -400,7 +430,7 @@ export class TarWriter {
         return defaultVal;
     }
 
-    _fillHeader(header_offset, opts, fileType) {
+    _fillHeader(header_offset: number, opts: any, fileType: string) {
         let uid = this._getOpt(opts, "uid", 1000);
         let gid = this._getOpt(opts, "gid", 1000);
         let mode = this._getOpt(opts, "mode", fileType === "file" ? "664" : "775");
@@ -411,7 +441,7 @@ export class TarWriter {
         this._writeFileMode(mode, header_offset);
         this._writeFileUid(uid.toString(8), header_offset);
         this._writeFileGid(gid.toString(8), header_offset);
-        this._writeFileMtime(Math.trunc(mtime / 1000).toString(8), header_offset);
+        this._writeFileMtime(Number(Math.trunc(mtime / 1000).toString(8)), header_offset);
 
         this._writeString("ustar", header_offset + 257, 6); // magic string
         this._writeString("00", header_offset + 263, 2); // magic version
