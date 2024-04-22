@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 declare interface Window {
-    lockfiles: LockfilesMap;
+    lockfilesUrl: string;
 }
 
 declare type LockfilesMap = Record<string, string>;

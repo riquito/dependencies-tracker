@@ -5,6 +5,6 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App lockfiles={window.lockfiles} />
+    <App lockfilesUrl={window.lockfilesUrl} />
   </React.StrictMode>,
 )

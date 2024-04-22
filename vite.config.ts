@@ -41,7 +41,6 @@ export default defineConfig({
     react(),
     hexLoader,
     ViteEjsPlugin({
-      lockfiles: JSON.stringify(lockFiles),
-      domain: "hello"
+      lockfilesUrl: '/src/assets/lockfiles.tar.gzip',
     }),],
 })

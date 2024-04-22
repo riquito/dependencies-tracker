@@ -6,6 +6,7 @@ import { RepoFilter } from './repo-filter'
 import searchIcon from '/search.svg'
 /* @ts-ignore */
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex'
+import { fetchLockfiles } from './fetch-lockfiles.ts'
 import './App.css'
 
 const fromHexString = (hexString: string): ArrayBuffer =>
@@ -152,11 +153,12 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
 }
 
 export type AppProps = {
-  lockfiles: LockfilesMap;
+  lockfilesUrl: string;
 }
 
-function App({ lockfiles }: AppProps) {
-  const [repositories] = useState(Object.keys(lockfiles));
+function App({ lockfilesUrl }: AppProps) {
+  const [repositories, setRepositories] = useState<string[]>([]);
+  const [lockfiles, setLockfiles] = useState<LockfilesMap>({});
   const [packageQuery, setPackageQuery] = useState('');
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
@@ -164,6 +166,14 @@ function App({ lockfiles }: AppProps) {
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState(new Set<string>(new Set(repositories)));
 
+  useEffect(() => {
+    fetchLockfiles(lockfilesUrl).then(lockfiles => {
+      const repositories = Object.keys(lockfiles);
+      setLockfiles(lockfiles);
+      setRepositories(repositories)
+      setSelectedRepos(new Set(repositories))
+    })
+  }, [lockfilesUrl])
 
   useEffect(() => {
     WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
