@@ -181,6 +181,7 @@ function App({ lockfilesUrl }: AppProps) {
   const [repositories, setRepositories] = useState<string[]>([]);
   const [lockfiles, setLockfiles] = useState<LockfilesMap>({});
   const [packageQuery, setPackageQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
@@ -212,7 +213,10 @@ function App({ lockfilesUrl }: AppProps) {
         .then((pairs: [string, YarnWhyJSONOutput | null][]) => {
           const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
           setSearchResult(pairsRepoMatches);
+          setIsSearching(false);
         })
+    } else if (reposWithMaybePackage.length === 0) {
+      setIsSearching(false);
     }
   }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos])
 
@@ -248,10 +252,13 @@ function App({ lockfilesUrl }: AppProps) {
 
       <div className="search-bar">
         <SearchInput onSubmit={(query) => {
-          const packageName = query ? query.split(' ')[0] : '';
-          setPackageQuery(query);
-          setSearchResult([]);
-          setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
+          if (query !== packageQuery) {
+            const packageName = query ? query.split(' ')[0] : '';
+            setPackageQuery(query);
+            setSearchResult([]);
+            setIsSearching(true);
+            setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
+          }
         }} />
         <div className='search-examples'>
           <div className='example'>{"e.g. react"}</div>
@@ -273,7 +280,14 @@ function App({ lockfilesUrl }: AppProps) {
             <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery.split(' ')[0]} />
           )}
           {
-            searchResult.length === 0 && (
+            isSearching && (
+              <div className="search-results-loading">
+                Loading...
+              </div>
+            )
+          }
+          {
+            !isSearching && searchResult.length === 0 && (
               <div className="search-results-no-results">No results found</div>
             )
           }
