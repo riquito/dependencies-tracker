@@ -8,6 +8,7 @@ import searchIcon from '/search.svg'
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex'
 import { fetchLockfiles } from './fetch-lockfiles.ts'
 import './App.css'
+import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts'
 
 const fromHexString = (hexString: string): ArrayBuffer =>
   Uint8Array.from(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
@@ -175,9 +176,10 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
 
 export type AppProps = {
   lockfilesUrl: string;
+  defaultSelectedRepos: Set<string>
 }
 
-function App({ lockfilesUrl }: AppProps) {
+function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
   const [repositories, setRepositories] = useState<string[]>([]);
   const [lockfiles, setLockfiles] = useState<LockfilesMap>({});
   const [packageQuery, setPackageQuery] = useState('');
@@ -186,14 +188,18 @@ function App({ lockfilesUrl }: AppProps) {
   const [wasm, setWasm] = useState<WebAssembly.Module>();
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
-  const [selectedRepos, setSelectedRepos] = useState(new Set<string>(new Set(repositories)));
+  const [selectedRepos, setSelectedRepos] = useState(new Set<string>(defaultSelectedRepos));
 
   useEffect(() => {
     fetchLockfiles(lockfilesUrl).then(lockfiles => {
       const repositories = Object.keys(lockfiles);
+      const cleanedSelectedRepos = cleanFilters(selectedRepos, repositories)
       setLockfiles(lockfiles);
       setRepositories(repositories)
-      setSelectedRepos(new Set(repositories))
+      setSelectedRepos(cleanedSelectedRepos.size > 0
+        ? cleanedSelectedRepos
+        : new Set(repositories)
+      )
     })
   }, [lockfilesUrl])
 
@@ -240,6 +246,12 @@ function App({ lockfilesUrl }: AppProps) {
           onChange={(selectedRepos) => {
             if (selectedRepos.size > 0) {
               setSelectedRepos(selectedRepos);
+              if (selectedRepos.size === repositories.length) {
+                // "all" means that if new repositories later appears we want to see them
+                deleteCachedFilters();
+              } else {
+                setCachedFilters(selectedRepos);
+              }
             }
             setFilterPanelVisible(false);
             setTimeout(() => {
