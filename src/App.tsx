@@ -132,12 +132,17 @@ function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTar
 }
 
 function SearchLockFile({ repo, result, packageName }: LockFileProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const isTargetPackage = (name: string) => name === packageName;
 
   return (
     <details className='search-results-item'>
-      <summary className='search-results-repo-name'>{repo}</summary>
-      <div>
+      <summary className='search-results-repo-name' onClick={(_) => {
+        ref.current!.querySelectorAll('.blink_me').forEach(elem => {
+          elem.classList.remove('blink_me');
+        })
+      }}>{repo}</summary>
+      <div ref={ref}>
         <ul>
           {result.map((node: YarnWhyJSONOutputLeaf) => {
             return renderDependencyRow(node, isTargetPackage, repo)
