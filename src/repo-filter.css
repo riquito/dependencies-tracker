@@ -12,6 +12,11 @@
     gap: 0.5em;
 }
 
+.repo-filter-header .btn-link {
+    /* ensures that when we swap between enable/disable it doesn't jump around */
+    min-width: 110px;
+}
+
 .repo-filter-content {
     display: flex;
     flex-wrap: wrap;
