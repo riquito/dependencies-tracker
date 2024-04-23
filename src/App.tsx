@@ -75,6 +75,18 @@ function getColorForVersion(version: string): string {
   }
 }
 
+function isVisible(el: HTMLElement): boolean {
+  const rect = el.getBoundingClientRect();
+  const elemTop = rect.top;
+  const elemBottom = rect.bottom;
+
+  // Only completely visible elements return true:
+  const isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+  // Partially visible elements return true:
+  //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
+  return isVisible;
+}
+
 function renderTarget({ name, version }: { name: string, version: string }) {
   return (
     <span className="target">
@@ -96,6 +108,10 @@ function renderDescriptor([name, version]: [string, string], isTargetPackage: Is
           anchor.classList.remove('blink_me');
           anchor.offsetHeight; // force repaint to trigger repaint and set `animation-name: none;`
           anchor.classList.add('blink_me');
+
+          if (isVisible(anchor)) {
+            ev.preventDefault();
+          }
         }}>
           {text}
         </a>
