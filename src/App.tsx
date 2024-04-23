@@ -253,6 +253,10 @@ function App({ lockfilesUrl }: AppProps) {
       <div className="search-bar">
         <SearchInput onSubmit={(query) => {
           if (query !== packageQuery) {
+            // If query is in the form foo@1.2.3 (perhaps copy-pasted from results)
+            // then replace @ with space (need extra care to handle namespaces or versions
+            // with @ in them)
+            query = query.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ')
             const packageName = query ? query.split(' ')[0] : '';
             setPackageQuery(query);
             setSearchResult([]);
