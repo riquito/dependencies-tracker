@@ -34,3 +34,4 @@ vite.config.js
 vite.config.d.ts
 tsconfig.node.tsbuildinfo
 lockfiles
+src/assets/lockfiles.tar.gzip
