@@ -1,30 +1,25 @@
-# React + TypeScript + Vite
+# Dependencies Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Single page app that allows you to search for dependencies across yarn.lock files.
 
-Currently, two official plugins are available:
+## Initial Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+You must copy your yarn.lock files into the `lockfiles` directory.
 
-## Expanding the ESLint configuration
+The structur of that directory should mimick your repositories, e.g.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```
+lockfiles/some_org/some_owner/yarn.lock
+lockfiles/some_org/another_owner/yarn.lock
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## How to run
+
+```bash
+yarn install # yarn >= 3.0
+yarn dev
+```
+
+## LICENSE
+
+MIT
