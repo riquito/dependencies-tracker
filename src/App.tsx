@@ -1,25 +1,24 @@
-import { useEffect, useRef, useState } from 'react'
-import { YarnWhyJSONOutput, YarnWhyJSONOutputLeaf, yarnWhy } from './yarn-why'
-import { RepoFilter } from './repo-filter'
+import { useEffect, useRef, useState } from 'react';
+import { YarnWhyJSONOutput, YarnWhyJSONOutputLeaf, yarnWhy } from './yarn-why';
+import { RepoFilter } from './repo-filter';
 
 // Icon from https://lucide.dev/icons/microscope
-import searchIcon from '/search.svg'
+import searchIcon from '/search.svg';
 /* @ts-ignore */
-import yarnWhyData from './assets/yarn-why.wasm?raw-hex'
-import { fetchLockfiles } from './fetch-lockfiles.ts'
-import './App.css'
-import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts'
+import yarnWhyData from './assets/yarn-why.wasm?raw-hex';
+import { fetchLockfiles } from './fetch-lockfiles.ts';
+import './App.css';
+import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts';
 
 const fromHexString = (hexString: string): ArrayBuffer =>
   Uint8Array.from(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
 
-
 type SearchInputProps = {
   onSubmit: (query: string) => void;
-}
+};
 
 function SearchInput({ onSubmit }: SearchInputProps) {
-  const ref = useRef<HTMLInputElement>(null)
+  const ref = useRef<HTMLInputElement>(null);
   return (
     <div className="search-input">
       <input
@@ -34,19 +33,23 @@ function SearchInput({ onSubmit }: SearchInputProps) {
           }
         }}
       />
-      <button onClick={() => {
-        const value = ref.current!.value.trim();
-        onSubmit(value);
-      }}>Search</button>
+      <button
+        onClick={() => {
+          const value = ref.current!.value.trim();
+          onSubmit(value);
+        }}
+      >
+        Search
+      </button>
     </div>
-  )
+  );
 }
 
 type LockFileProps = {
   repo: string;
-  result: YarnWhyJSONOutput,
+  result: YarnWhyJSONOutput;
   packageName: string;
-}
+};
 
 const COLORS = Object.values({
   red: '#f44336',
@@ -60,7 +63,7 @@ const COLORS = Object.values({
   brown: '#da6a42',
   // gray: '#9e9e9e',
   // black: '#000000',
-})
+});
 let COLORS_IDX = 2;
 
 const VERSION_TO_COLOR: Record<string, string> = {};
@@ -82,43 +85,58 @@ function isVisible(el: HTMLElement): boolean {
   const elemBottom = rect.bottom;
 
   // Only completely visible elements return true:
-  const isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+  const isVisible = elemTop >= 0 && elemBottom <= window.innerHeight;
   // Partially visible elements return true:
   //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
   return isVisible;
 }
 
-function renderTarget({ name, version }: { name: string, version: string }) {
+function renderTarget({ name, version }: { name: string; version: string }) {
   return (
     <span className="target">
-      <span className='target-name'>{name}</span>@<span className='target-version' style={{ color: getColorForVersion(version) }}>{version}</span>
+      <span className="target-name">{name}</span>@
+      <span className="target-version" style={{ color: getColorForVersion(version) }}>
+        {version}
+      </span>
     </span>
-  )
+  );
 }
 
-function renderDescriptor([name, version]: [string, string], isTargetPackage: IsTargetPackage, repo: string, isLeaf: boolean) {
-  const id = `${repo}:${name}@${version}`
-  const text = `${name}@${version}`
+function renderDescriptor(
+  [name, version]: [string, string],
+  isTargetPackage: IsTargetPackage,
+  repo: string,
+  isLeaf: boolean
+) {
+  const id = `${repo}:${name}@${version}`;
+  const text = `${name}@${version}`;
 
   return (
     <span className={`descriptor`} id={id}>
-      {isTargetPackage(name) ? renderTarget({ name, version }) : (isLeaf ? (
-        <a href={`#${id}`} onClick={(ev) => {
-          const targetId = ev.currentTarget.getAttribute('href')!.slice(1)
-          const anchor = document.getElementById(targetId)!;
-          anchor.classList.remove('blink_me');
-          anchor.offsetHeight; // force repaint to trigger repaint and set `animation-name: none;`
-          anchor.classList.add('blink_me');
+      {isTargetPackage(name) ? (
+        renderTarget({ name, version })
+      ) : isLeaf ? (
+        <a
+          href={`#${id}`}
+          onClick={(ev) => {
+            const targetId = ev.currentTarget.getAttribute('href')!.slice(1);
+            const anchor = document.getElementById(targetId)!;
+            anchor.classList.remove('blink_me');
+            anchor.offsetHeight; // force repaint to trigger repaint and set `animation-name: none;`
+            anchor.classList.add('blink_me');
 
-          if (isVisible(anchor)) {
-            ev.preventDefault();
-          }
-        }}>
+            if (isVisible(anchor)) {
+              ev.preventDefault();
+            }
+          }}
+        >
           {text}
         </a>
-      ) : text)}
+      ) : (
+        text
+      )}
     </span>
-  )
+  );
 }
 
 type IsTargetPackage = (s: string) => boolean;
@@ -127,9 +145,9 @@ function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTar
   return (
     <li key={node.descriptor.join('@')}>
       {renderDescriptor(node.descriptor, isTargetPackage, repo, !(node.children && node.children.length > 0))}
-      {node.children && <ul>{node.children.map(n => renderDependencyRow(n, isTargetPackage, repo))}</ul>}
+      {node.children && <ul>{node.children.map((n) => renderDependencyRow(n, isTargetPackage, repo))}</ul>}
     </li>
-  )
+  );
 }
 
 function SearchLockFile({ repo, result, packageName }: LockFileProps) {
@@ -137,21 +155,26 @@ function SearchLockFile({ repo, result, packageName }: LockFileProps) {
   const isTargetPackage = (name: string) => name === packageName;
 
   return (
-    <details className='search-results-item'>
-      <summary className='search-results-repo-name' onClick={(_) => {
-        ref.current!.querySelectorAll('.blink_me').forEach(elem => {
-          elem.classList.remove('blink_me');
-        })
-      }}>{repo}</summary>
+    <details className="search-results-item">
+      <summary
+        className="search-results-repo-name"
+        onClick={(_) => {
+          ref.current!.querySelectorAll('.blink_me').forEach((elem) => {
+            elem.classList.remove('blink_me');
+          });
+        }}
+      >
+        {repo}
+      </summary>
       <div ref={ref}>
         <ul>
           {result.map((node: YarnWhyJSONOutputLeaf) => {
-            return renderDependencyRow(node, isTargetPackage, repo)
+            return renderDependencyRow(node, isTargetPackage, repo);
           })}
         </ul>
       </div>
     </details>
-  )
+  );
 }
 
 /**
@@ -161,7 +184,7 @@ function SearchLockFile({ repo, result, packageName }: LockFileProps) {
 function isPackageMaybeInLockFile(lockFile: string, packageName: string): boolean {
   // If the package is in the yarn lock file, it should at least be present
   // in the form <packageName>@ (maybe followed by version, maybe not, depend on yarn version)
-  return lockFile.includes(packageName + '@')
+  return lockFile.includes(packageName + '@');
 }
 
 function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: string): string[] {
@@ -169,15 +192,15 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
     return [];
   }
 
-  return Object.keys(lockFiles).filter(repo => {
-    return isPackageMaybeInLockFile(lockFiles[repo], packageName)
-  })
+  return Object.keys(lockFiles).filter((repo) => {
+    return isPackageMaybeInLockFile(lockFiles[repo], packageName);
+  });
 }
 
 export type AppProps = {
   lockfilesUrl: string;
-  defaultSelectedRepos: Set<string>
-}
+  defaultSelectedRepos: Set<string>;
+};
 
 function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
   const [repositories, setRepositories] = useState<string[]>([]);
@@ -191,53 +214,56 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
   const [selectedRepos, setSelectedRepos] = useState(new Set<string>(defaultSelectedRepos));
 
   useEffect(() => {
-    fetchLockfiles(lockfilesUrl).then(lockfiles => {
+    fetchLockfiles(lockfilesUrl).then((lockfiles) => {
       const repositories = Object.keys(lockfiles);
-      const cleanedSelectedRepos = cleanFilters(selectedRepos, repositories)
+      const cleanedSelectedRepos = cleanFilters(selectedRepos, repositories);
       setLockfiles(lockfiles);
-      setRepositories(repositories)
-      setSelectedRepos(cleanedSelectedRepos.size > 0
-        ? cleanedSelectedRepos
-        : new Set(repositories)
-      )
-    })
-  }, [lockfilesUrl])
+      setRepositories(repositories);
+      setSelectedRepos(cleanedSelectedRepos.size > 0 ? cleanedSelectedRepos : new Set(repositories));
+    });
+  }, [lockfilesUrl]);
 
   useEffect(() => {
     WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (packageQuery && wasm && reposWithMaybePackage.length > 0) {
-      Promise.all(reposWithMaybePackage
-        .filter(repo => selectedRepos.has(repo))
-        .map<Promise<[string, YarnWhyJSONOutput | null]>>((repo =>
-          yarnWhy({ lockFile: lockfiles[repo], query: packageQuery, wasm }).then((output) => {
-            return [repo, output]
-          })
-        )))
-        .then((pairs: [string, YarnWhyJSONOutput | null][]) => {
-          const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
-          setSearchResult(pairsRepoMatches);
-          setIsSearching(false);
-        })
+      Promise.all(
+        reposWithMaybePackage
+          .filter((repo) => selectedRepos.has(repo))
+          .map<Promise<[string, YarnWhyJSONOutput | null]>>((repo) =>
+            yarnWhy({ lockFile: lockfiles[repo], query: packageQuery, wasm }).then((output) => {
+              return [repo, output];
+            })
+          )
+      ).then((pairs: [string, YarnWhyJSONOutput | null][]) => {
+        const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
+        setSearchResult(pairsRepoMatches);
+        setIsSearching(false);
+      });
     } else if (reposWithMaybePackage.length === 0) {
       setIsSearching(false);
     }
-  }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos])
+  }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos]);
 
   return (
     <>
-      <h1 className="main-title"><img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker</h1>
+      <h1 className="main-title">
+        <img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker
+      </h1>
 
       <div className="repo-filter-title" style={{ display: filterPanelVisible ? 'none' : 'block' }}>
-        {selectedRepos.size === repositories.length
-          ? 'Search in all repositories'
-          : (
-            <>Search in <b>{selectedRepos.size}</b> out of <b>{repositories.length}</b> repositories</>
-          )
-        }
-        <button id="openFilterPanelButton" onClick={() => setFilterPanelVisible(true)}>Show filters panel</button>
+        {selectedRepos.size === repositories.length ? (
+          'Search in all repositories'
+        ) : (
+          <>
+            Search in <b>{selectedRepos.size}</b> out of <b>{repositories.length}</b> repositories
+          </>
+        )}
+        <button id="openFilterPanelButton" onClick={() => setFilterPanelVisible(true)}>
+          Show filters panel
+        </button>
       </div>
       {filterPanelVisible && (
         <RepoFilter
@@ -256,62 +282,57 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
             setFilterPanelVisible(false);
             setTimeout(() => {
               document.getElementById('openFilterPanelButton')!.focus();
-            }, 30)
-
+            }, 30);
           }}
         />
       )}
 
       <div className="search-bar">
-        <SearchInput onSubmit={(query) => {
-          if (query !== packageQuery) {
-            // If query is in the form foo@1.2.3 (perhaps copy-pasted from results)
-            // then replace @ with space (need extra care to handle namespaces or versions
-            // with @ in them)
-            query = query.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ')
-            const packageName = query ? query.split(' ')[0] : '';
-            setPackageQuery(query);
-            setSearchResult([]);
-            setIsSearching(true);
-            setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
-          }
-        }} />
-        <div className='search-examples'>
-          <div className='example'>{"e.g. react"}</div>
-          <div className='example'>{"e.g. react ^19.0.0"}</div>
-          <div className='example'>{"e.g. react >=15.0.0, <20.0.0"}</div>
+        <SearchInput
+          onSubmit={(query) => {
+            if (query !== packageQuery) {
+              // If query is in the form foo@1.2.3 (perhaps copy-pasted from results)
+              // then replace @ with space (need extra care to handle namespaces or versions
+              // with @ in them)
+              query = query.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ');
+              const packageName = query ? query.split(' ')[0] : '';
+              setPackageQuery(query);
+              setSearchResult([]);
+              setIsSearching(true);
+              setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
+            }
+          }}
+        />
+        <div className="search-examples">
+          <div className="example">{'e.g. react'}</div>
+          <div className="example">{'e.g. react ^19.0.0'}</div>
+          <div className="example">{'e.g. react >=15.0.0, <20.0.0'}</div>
         </div>
       </div>
 
       {packageQuery.length > 0 && (
         <div className="search-results">
           <h3 className="search-results-header">Search Results</h3>
-          <div>Query: <b>{packageQuery}</b></div>
+          <div>
+            Query: <b>{packageQuery}</b>
+          </div>
           {searchResult.length > 0 && (
             <div className="search-results-count">
-              <b>{searchResult.reduce((acc, [_, result]) => acc + result.length, 0)}</b> top level dependencies found across <b>{searchResult.length}</b> repositories
+              <b>{searchResult.reduce((acc, [_, result]) => acc + result.length, 0)}</b> top level dependencies found
+              across <b>{searchResult.length}</b> repositories
             </div>
           )}
-          {searchResult.map(([repo, result]) =>
+          {searchResult.map(([repo, result]) => (
             <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery.split(' ')[0]} />
+          ))}
+          {isSearching && <div className="search-results-loading">Loading...</div>}
+          {!isSearching && searchResult.length === 0 && (
+            <div className="search-results-no-results">No results found</div>
           )}
-          {
-            isSearching && (
-              <div className="search-results-loading">
-                Loading...
-              </div>
-            )
-          }
-          {
-            !isSearching && searchResult.length === 0 && (
-              <div className="search-results-no-results">No results found</div>
-            )
-          }
         </div>
       )}
     </>
-  )
+  );
 }
 
-
-export default App
+export default App;

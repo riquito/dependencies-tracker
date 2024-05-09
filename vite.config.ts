@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import { ViteEjsPlugin } from "vite-plugin-ejs";
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig } from 'vite';
+import { ViteEjsPlugin } from 'vite-plugin-ejs';
+import react from '@vitejs/plugin-react-swc';
 import { glob } from 'glob';
 import { readFileSync } from 'node:fs';
 
@@ -9,14 +9,13 @@ const hexLoader = {
   name: 'hex-loader',
   transform(code: string, id: string) {
     const [path, query] = id.split('?');
-    if (query != 'raw-hex')
-      return null;
+    if (query != 'raw-hex') return null;
 
     const data = readFileSync(path);
     const hex = data.toString('hex');
 
     return `export default '${hex}';`;
-  }
+  },
 };
 
 // Find all the lock files inside `lockfiles` using glob
@@ -24,12 +23,12 @@ const hexLoader = {
 
 const lockfilesPaths = glob.sync('lockfiles/**/*.lock', {
   absolute: false,
-  ignore: []
+  ignore: [],
 });
 lockfilesPaths.sort();
 
-const lockFiles: Record<string, string> = {}
-lockfilesPaths.map(path => {
+const lockFiles: Record<string, string> = {};
+lockfilesPaths.map((path) => {
   // Given path "lockfiles/foo/bar/yarn.lock"
   // the key is "foo/bar"
   lockFiles[path.slice('lockfiles'.length + 1, path.lastIndexOf('/'))] = readFileSync(path, 'utf-8');
@@ -42,5 +41,6 @@ export default defineConfig({
     hexLoader,
     ViteEjsPlugin({
       lockfilesUrl: process.env['DEP_URL'] || '/src/assets/lockfiles.tar.gzip',
-    }),],
-})
+    }),
+  ],
+});

@@ -1,70 +1,94 @@
-import { useEffect, useRef, useState } from 'react'
-import './repo-filter.css'
+import { useEffect, useRef, useState } from 'react';
+import './repo-filter.css';
 
 export type RepoFIlterProps = {
-    repositories: string[],
-    selectedRepositories: Set<string>,
-    onChange: (selectedRepos: Set<string>) => void,
-}
+  repositories: string[];
+  selectedRepositories: Set<string>;
+  onChange: (selectedRepos: Set<string>) => void;
+};
 
 export function RepoFilter(props: RepoFIlterProps) {
-    const {
-        selectedRepositories,
-        onChange,
-    } = props;
-    let repositories = [...props.repositories];
-    repositories.sort((a, b) => a.split('/')[1].localeCompare(b.split('/')[1]));
+  const { selectedRepositories, onChange } = props;
+  let repositories = [...props.repositories];
+  repositories.sort((a, b) => a.split('/')[1].localeCompare(b.split('/')[1]));
 
-    const [selected, setSelected] = useState(new Set(selectedRepositories));
-    const ref = useRef<HTMLDivElement>(null)
+  const [selected, setSelected] = useState(new Set(selectedRepositories));
+  const ref = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        if (ref.current) {
-            (ref.current.querySelectorAll('button.repo-filter-cancel-btn')[0] as HTMLButtonElement).focus()
-        }
-    }, [])
+  useEffect(() => {
+    if (ref.current) {
+      (ref.current.querySelectorAll('button.repo-filter-cancel-btn')[0] as HTMLButtonElement).focus();
+    }
+  }, []);
 
-
-    return (
-        <div className="repo-filter" ref={ref}>
-            <div className="repo-filter-header">
-                <h3>Repositories
-                    {selected.size === repositories.length
-                        ? <button className="btn-link" onClick={() => setSelected(new Set([]))}>Disable all</button>
-                        : <button className="btn-link" onClick={() => setSelected(new Set(repositories))}>Enable all</button>
+  return (
+    <div className="repo-filter" ref={ref}>
+      <div className="repo-filter-header">
+        <h3>
+          Repositories
+          {selected.size === repositories.length ? (
+            <button className="btn-link" onClick={() => setSelected(new Set([]))}>
+              Disable all
+            </button>
+          ) : (
+            <button className="btn-link" onClick={() => setSelected(new Set(repositories))}>
+              Enable all
+            </button>
+          )}
+          <button
+            className="repo-filter-cancel-btn secondary"
+            onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+              onChange(new Set([]));
+            }}
+          >
+            Cancel
+          </button>
+        </h3>
+      </div>
+      <div className="repo-filter-content">
+        {repositories.map((repo) => {
+          return (
+            <div className={`repo-filter-content-item ${selected.has(repo) ? 'enabled' : 'disabled'}`} key={repo}>
+              <label style={{ cursor: 'pointer' }} title={repo}>
+                <input
+                  tabIndex={0}
+                  type="checkbox"
+                  id={repo}
+                  name={repo}
+                  value={repo}
+                  checked={selected.has(repo)}
+                  onChange={(ev) => {
+                    if (ev.target.checked) {
+                      selected.add(repo);
+                    } else {
+                      selected.delete(repo);
                     }
-                    <button className="repo-filter-cancel-btn secondary" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
-                        onChange(new Set([]))
-                    }}>Cancel</button>
-                </h3>
+                    setSelected(new Set(selected));
+                  }}
+                />
+                {repo.split('/')[1]}
+              </label>
             </div>
-            <div className="repo-filter-content" >
-                {
-                    repositories.map((repo) => {
-                        return (
-                            <div className={`repo-filter-content-item ${selected.has(repo) ? 'enabled' : 'disabled'}`} key={repo} >
-                                <label style={{ cursor: 'pointer' }} title={repo} >
-                                    <input tabIndex={0} type="checkbox" id={repo} name={repo} value={repo} checked={selected.has(repo)} onChange={(ev) => {
-                                        if (ev.target.checked) {
-                                            selected.add(repo);
-                                        } else {
-                                            selected.delete(repo);
-                                        }
-                                        setSelected(new Set(selected));
-                                    }} />
-                                    {repo.split('/')[1]}
-                                </label>
-                            </div>
-                        )
-                    }
-                    )}
-            </div>
-            <button className="repo-filter-cancel-btn secondary" onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
-                onChange(new Set([]))
-            }}>Cancel</button>
-            <button className="repo-filter-apply-btn" disabled={selected.size === 0} onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
-                onChange(selected)
-            }}>Apply changes</button>
-        </div>
-    )
+          );
+        })}
+      </div>
+      <button
+        className="repo-filter-cancel-btn secondary"
+        onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+          onChange(new Set([]));
+        }}
+      >
+        Cancel
+      </button>
+      <button
+        className="repo-filter-apply-btn"
+        disabled={selected.size === 0}
+        onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+          onChange(selected);
+        }}
+      >
+        Apply changes
+      </button>
+    </div>
+  );
 }

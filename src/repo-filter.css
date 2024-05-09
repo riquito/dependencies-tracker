@@ -1,89 +1,88 @@
 .repo-filter {
-    background-color: #d4d6d9;
-    color: black;
-    padding: 1em;
-    text-align: left;
+  background-color: #d4d6d9;
+  color: black;
+  padding: 1em;
+  text-align: left;
 }
 
 .repo-filter-header h3 {
-    margin-top: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .repo-filter-header .btn-link {
-    /* ensures that when we swap between enable/disable it doesn't jump around */
-    min-width: 110px;
+  /* ensures that when we swap between enable/disable it doesn't jump around */
+  min-width: 110px;
 }
 
 .repo-filter-content {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1em;
-    max-width: 600px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  max-width: 600px;
 }
 
 .repo-filter-content-item {
-    flex: 1 0 auto;
-    display: inline-block;
-    width: 180px;
-    max-width: 180px;
-    box-sizing: border-box;
-    /* border: 1px solid green; */
-    white-space: nowrap;
-    overflow: hidden;
-    cursor: pointer;
-    border-radius: 0.3em;
+  flex: 1 0 auto;
+  display: inline-block;
+  width: 180px;
+  max-width: 180px;
+  box-sizing: border-box;
+  /* border: 1px solid green; */
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 0.3em;
 }
 
 .repo-filter-content-item:focus-within {
-    outline: 2px solid #0a0c0c;
+  outline: 2px solid #0a0c0c;
 }
 
 .repo-filter-content-item label {
-    width: 100%;
-    height: 100%;
-    display: inline-block;
-    padding: 0.3em;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    overflow: hidden;
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  padding: 0.3em;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .repo-filter-content-item:hover {
-    /* apply a css filter to make the background color lighter */
-    filter: brightness(1.2);
+  /* apply a css filter to make the background color lighter */
+  filter: brightness(1.2);
 }
 
-.repo-filter-content-item input[type="checkbox"] {
-    /* display: none; */
-    opacity: 0;
-    width: 0;
-    margin: 0;
-    padding: 0;
-    height: 0;
+.repo-filter-content-item input[type='checkbox'] {
+  /* display: none; */
+  opacity: 0;
+  width: 0;
+  margin: 0;
+  padding: 0;
+  height: 0;
 }
 
 .repo-filter-content-item.enabled {
-    background-color: #3f51b5;
-    border: 1px solid transparent;
-    box-shadow:
-        0 3px 1px -2px rgba(0, 0, 0, .2),
-        0 2px 2px 0 rgba(0, 0, 0, .14),
-        0 1px 5px 0 rgba(0, 0, 0, .12);
-    font-weight: 700;
-    color: #FFF;
+  background-color: #3f51b5;
+  border: 1px solid transparent;
+  box-shadow:
+    0 3px 1px -2px rgba(0, 0, 0, 0.2),
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  font-weight: 700;
+  color: #fff;
 }
 
-
 .repo-filter-content-item.disabled {
-    background-color: rgb(194, 194, 194);
-    color: rgb(94, 94, 94);
-    border: 1px solid gray;
+  background-color: rgb(194, 194, 194);
+  color: rgb(94, 94, 94);
+  border: 1px solid gray;
 }
 
 .repo-filter-apply-btn {
-    margin-top: 1em;
-    margin-left: 0.5em;
+  margin-top: 1em;
+  margin-left: 0.5em;
 }
