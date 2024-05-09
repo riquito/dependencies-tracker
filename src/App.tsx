@@ -212,7 +212,7 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState(new Set<string>(defaultSelectedRepos));
-  const [theme, setTheme] = useState<ThemeType>('auto');
+  const [theme, setTheme] = useState<ThemeType>(getThemePreference());
   const [systemTheme, setSystemTheme] = useState<ThemeType>('dark');
 
   useEffect(() => {
