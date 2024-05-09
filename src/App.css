@@ -92,34 +92,40 @@
   --palette-9: #65d67c;
 }
 
-@media (prefers-color-scheme: light) {
-  :root .logo {
-    /* filter created following https://stackoverflow.com/a/52041765 */
-    filter: invert(15%) sepia(55%) saturate(562%) hue-rotate(166deg) brightness(88%) contrast(85%);
-  }
+.theme-select {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  display: flex;
+  gap: 1em;
+}
 
-  :root .search-results-header {
-    color: rgb(10, 136, 36);
-  }
+.light-theme .logo {
+  /* filter created following https://stackoverflow.com/a/52041765 */
+  filter: invert(15%) sepia(55%) saturate(562%) hue-rotate(166deg) brightness(88%) contrast(85%);
+}
 
-  :root .search-results-repo-name {
-    color: #1f57a0;
-  }
+.light-theme .search-results-header {
+  color: rgb(10, 136, 36);
+}
 
-  :root .search-bar,
-  :root .search-examples {
-    color: #757575;
-  }
+.light-theme .search-results-repo-name {
+  color: #1f57a0;
+}
 
-  :root .search-results {
-    --palette-1: #e12e21;
-    --palette-2: #3b7f03;
-    --palette-3: #006fc7;
-    --palette-4: #5e0066;
-    --palette-5: #9c27b0;
-    --palette-6: #108290;
-    --palette-7: #810000;
-    --palette-8: #0a6303;
-    --palette-9: #bd5a37;
-  }
+.light-theme .search-bar,
+.light-theme .search-examples {
+  color: #757575;
+}
+
+.light-theme .search-results {
+  --palette-1: #e12e21;
+  --palette-2: #3b7f03;
+  --palette-3: #006fc7;
+  --palette-4: #5e0066;
+  --palette-5: #9c27b0;
+  --palette-6: #108290;
+  --palette-7: #810000;
+  --palette-8: #0a6303;
+  --palette-9: #bd5a37;
 }

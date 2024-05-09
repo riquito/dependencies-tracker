@@ -31,7 +31,7 @@ html {
 a,
 .btn-link {
   font-weight: 500;
-  color: #7e84ff;
+  color: #3f46ce;
   text-decoration: underline;
 }
 
@@ -103,33 +103,31 @@ button.secondary {
   color: black;
   border: 1px solid;
 }
+.light-theme {
+  color: #213547;
+  background-color: #ffffff;
+}
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
+.light-theme a,
+.light-theme .btn-link {
+  color: #3f46ce;
+}
 
-  a {
-    color: #3f46ce;
-  }
+.light-theme a:hover {
+  color: #4146a2;
+}
 
-  a:hover {
-    color: #4146a2;
-  }
+.light-theme button {
+  background-color: #dadada;
+}
 
-  button {
-    background-color: #dadada;
-  }
+.light-theme button.secondary {
+  background-color: #ffffff;
+}
 
-  button.secondary {
-    background-color: #ffffff;
-  }
-
-  button.secondary:hover {
-    /* apply a css filter to make the background color darker */
-    filter: brightness(0.9);
-  }
+.light-theme button.secondary:hover {
+  /* apply a css filter to make the background color darker */
+  filter: brightness(0.9);
 }
 
 summary {

@@ -9,6 +9,7 @@ import yarnWhyData from './assets/yarn-why.wasm?raw-hex';
 import { fetchLockfiles } from './fetch-lockfiles.ts';
 import './App.css';
 import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts';
+import { Theme, ThemeType, getThemePreference, setThemePreference } from './theme.tsx';
 
 const fromHexString = (hexString: string): ArrayBuffer =>
   Uint8Array.from(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
@@ -211,6 +212,8 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState(new Set<string>(defaultSelectedRepos));
+  const [theme, setTheme] = useState<ThemeType>('auto');
+  const [systemTheme, setSystemTheme] = useState<ThemeType>('dark');
 
   useEffect(() => {
     fetchLockfiles(lockfilesUrl).then((lockfiles) => {
@@ -246,8 +249,45 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
     }
   }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos]);
 
+  useEffect(() => {
+    const effectiveTheme = (theme === 'auto' && systemTheme) || theme;
+    document.body.classList.toggle('dark-theme', effectiveTheme === 'dark');
+    document.body.classList.toggle('light-theme', effectiveTheme === 'light');
+
+    document.body.parentElement!.style.colorScheme = effectiveTheme;
+  }, [theme, systemTheme]);
+
+  useEffect(() => {
+    if (window.matchMedia) {
+      if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        setSystemTheme('light');
+      } else {
+        setSystemTheme('dark');
+      }
+    }
+    const onSystemColorSchemePreferenceChanged = (event: any) => {
+      const newColorScheme = event.matches ? 'light' : 'dark';
+      setSystemTheme(newColorScheme);
+    };
+
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', onSystemColorSchemePreferenceChanged);
+
+    return () => {
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .removeEventListener('change', onSystemColorSchemePreferenceChanged);
+    };
+  }, []);
+
   return (
     <>
+      <Theme
+        value={theme}
+        onChange={(theme) => {
+          setThemePreference(theme);
+          setTheme(theme);
+        }}
+      />
       <h1 className="main-title">
         <img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker
       </h1>
