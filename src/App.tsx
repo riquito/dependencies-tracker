@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { YarnWhyJSONOutput, YarnWhyJSONOutputLeaf, yarnWhy } from './yarn-why';
 import { RepoFilter } from './repo-filter';
 
-// Icon from https://lucide.dev/icons/microscope
-import searchIcon from '/search.svg';
 /* @ts-ignore */
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex';
 import { fetchLockfiles } from './fetch-lockfiles.ts';
@@ -289,7 +287,8 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
         }}
       />
       <h1 className="main-title">
-        <img src={searchIcon} className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker
+        {/* Icon from https://lucide.dev/icons/microscope */}
+        <img src="./search.svg" className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker
       </h1>
 
       <div className="repo-filter-title" style={{ display: filterPanelVisible ? 'none' : 'block' }}>

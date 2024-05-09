@@ -36,6 +36,7 @@ lockfilesPaths.map((path) => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [
     react(),
     hexLoader,
