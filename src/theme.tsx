@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 export const Themes = ['light', 'dark', 'auto'] as const;
 export type ThemeType = (typeof Themes)[number];
 
@@ -24,13 +22,13 @@ export function Theme({ value, onChange }: ThemeProps) {
       Theme
       <select onChange={(ev) => onChange(ev.currentTarget.value as ThemeType)} value={value}>
         <option value="auto" selected={value === 'auto'}>
-          🌓︎ OS default
+          🌗 OS default
         </option>
         <option value="light" selected={value === 'light'}>
-          ☼ Light
+          ☀️ Light
         </option>
         <option value="dark" selected={value === 'dark'}>
-          🌜︎︎ Dark
+          🌒 Dark
         </option>
       </select>
     </label>
