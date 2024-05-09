@@ -21,15 +21,9 @@ export function Theme({ value, onChange }: ThemeProps) {
     <label className="theme-select">
       Theme
       <select onChange={(ev) => onChange(ev.currentTarget.value as ThemeType)} value={value}>
-        <option value="auto" selected={value === 'auto'}>
-          🌗 OS default
-        </option>
-        <option value="light" selected={value === 'light'}>
-          ☀️ Light
-        </option>
-        <option value="dark" selected={value === 'dark'}>
-          🌒 Dark
-        </option>
+        <option value="auto">🌗 OS default</option>
+        <option value="light">☀️ Light</option>
+        <option value="dark">🌒 Dark</option>
       </select>
     </label>
   );
