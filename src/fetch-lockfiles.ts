@@ -16,7 +16,6 @@ export const fetchLockfiles = async (url: string): Promise<LockfilesMap> => {
   return Object.fromEntries<string>(
     data
       .filter((x) => x.type === 'file')
-      .filter((x) => x.name.includes('org_'))
       .map((x) => {
         return [x.name.replace('/yarn.lock', ''), tar.getTextFile(x.name) || ''];
       })
