@@ -86,3 +86,10 @@
   margin-top: 1em;
   margin-left: 0.5em;
 }
+
+@media (prefers-color-scheme: light) {
+  :root .repo-filter {
+    box-shadow: inset 0px 0px 0px 2px black;
+    background-color: unset;
+  }
+}

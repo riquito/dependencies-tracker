@@ -51,19 +51,17 @@ type LockFileProps = {
   packageName: string;
 };
 
-const COLORS = Object.values({
-  red: '#f44336',
-  green: '#4caf50',
-  blue: '#2196f3',
-  yellow: '#ffeb3b',
-  purple: '#9c27b0',
-  cyan: '#00bcd4',
-  pink: '#e91e63',
-  orange: '#ff9800',
-  brown: '#da6a42',
-  // gray: '#9e9e9e',
-  // black: '#000000',
-});
+const COLORS = [
+  'palette-1',
+  'palette-2',
+  'palette-3',
+  'palette-4',
+  'palette-5',
+  'palette-6',
+  'palette-7',
+  'palette-8',
+  'palette-9',
+];
 let COLORS_IDX = 2;
 
 const VERSION_TO_COLOR: Record<string, string> = {};
@@ -92,10 +90,11 @@ function isVisible(el: HTMLElement): boolean {
 }
 
 function renderTarget({ name, version }: { name: string; version: string }) {
+  const color = getColorForVersion(version);
   return (
     <span className="target">
       <span className="target-name">{name}</span>@
-      <span className="target-version" style={{ color: getColorForVersion(version) }}>
+      <span className="target-version" style={{ color: `var(--${color})` }}>
         {version}
       </span>
     </span>
