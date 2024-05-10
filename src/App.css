@@ -37,7 +37,7 @@
 }
 
 .search-input input::placeholder {
-  color: rgb(251, 251, 254);
+  color: #bcbaba;
 }
 
 .search-bar .search-examples {
@@ -110,7 +110,7 @@
 }
 
 .light-theme .search-input input::placeholder {
-  color: #1c1c1c;
+  color: #686868;
 }
 
 .light-theme .search-results-header {
