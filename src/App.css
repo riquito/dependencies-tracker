@@ -36,6 +36,10 @@
   width: 250px;
 }
 
+.search-input input::placeholder {
+  color: rgb(251, 251, 254);
+}
+
 .search-bar .search-examples {
   font-size: 80%;
   padding: 0 0.5em;
@@ -103,6 +107,10 @@
 .light-theme .logo {
   /* filter created following https://stackoverflow.com/a/52041765 */
   filter: invert(15%) sepia(55%) saturate(562%) hue-rotate(166deg) brightness(88%) contrast(85%);
+}
+
+.light-theme .search-input input::placeholder {
+  color: #1c1c1c;
 }
 
 .light-theme .search-results-header {
