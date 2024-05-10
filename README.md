@@ -1,6 +1,8 @@
 # Dependencies Tracker
 
-Single page app that allows you to search for dependencies across yarn.lock files.
+Single page app to search for dependencies across yarn.lock files.
+
+![screenshot](./docs/screenshot.png)
 
 The yarn.lock files must be collected in a single tar.gz, which must then be available at some url.
 The yarn.lock files in the tar.gz must be in paths mimicking the repository where they reside.
