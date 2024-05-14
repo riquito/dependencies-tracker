@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { YarnWhyJSONOutput, YarnWhyJSONOutputLeaf, yarnWhy } from './yarn-why';
 import { RepoFilter } from './repo-filter';
 
-/* @ts-ignore */
+/* @ts-expect-error typescript cannot understand how we load this file */
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex';
 import { fetchLockfiles } from './fetch-lockfiles.ts';
 import './App.css';
@@ -156,6 +156,7 @@ function SearchLockFile({ repo, result, packageName }: LockFileProps) {
     <details className="search-results-item">
       <summary
         className="search-results-repo-name"
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick={(_) => {
           ref.current!.querySelectorAll('.blink_me').forEach((elem) => {
             elem.classList.remove('blink_me');
@@ -253,6 +254,7 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
             })
           )
       ).then((pairs: [string, YarnWhyJSONOutput | null][]) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
         setSearchResult(pairsRepoMatches);
         setIsSearching(false);
@@ -278,7 +280,7 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
         setSystemTheme('dark');
       }
     }
-    const onSystemColorSchemePreferenceChanged = (event: any) => {
+    const onSystemColorSchemePreferenceChanged = (event: MediaQueryListEvent) => {
       const newColorScheme = event.matches ? 'light' : 'dark';
       setSystemTheme(newColorScheme);
     };
@@ -320,7 +322,8 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
   }, [packageQuery, lockfiles]);
 
   useEffect(() => {
-    const onPopstate = (event: PopStateEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const onPopstate = (_: PopStateEvent) => {
       const currentQueryInUrl = new URLSearchParams(window.location.search).get('q') || '';
       setPackageQuery(currentQueryInUrl);
 
@@ -400,6 +403,7 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
           </div>
           {searchResult.length > 0 && (
             <div className="search-results-count">
+              {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
               <b>{searchResult.reduce((acc, [_, result]) => acc + result.length, 0)}</b> top level dependencies found
               across <b>{searchResult.length}</b> repositories
             </div>

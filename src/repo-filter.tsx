@@ -9,7 +9,7 @@ export type RepoFIlterProps = {
 
 export function RepoFilter(props: RepoFIlterProps) {
   const { selectedRepositories, onChange } = props;
-  let repositories = [...props.repositories];
+  const repositories = [...props.repositories];
   repositories.sort((a, b) => a.split('/')[1].localeCompare(b.split('/')[1]));
 
   const [selected, setSelected] = useState(new Set(selectedRepositories));
@@ -37,6 +37,7 @@ export function RepoFilter(props: RepoFIlterProps) {
           )}
           <button
             className="repo-filter-cancel-btn secondary"
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
               onChange(new Set([]));
             }}
@@ -74,6 +75,7 @@ export function RepoFilter(props: RepoFIlterProps) {
       </div>
       <button
         className="repo-filter-cancel-btn secondary"
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
           onChange(new Set([]));
         }}
@@ -83,6 +85,7 @@ export function RepoFilter(props: RepoFIlterProps) {
       <button
         className="repo-filter-apply-btn"
         disabled={selected.size === 0}
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
           onChange(selected);
         }}
