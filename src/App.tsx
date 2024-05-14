@@ -198,12 +198,13 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
 export type AppProps = {
   lockfilesUrl: string;
   defaultSelectedRepos: Set<string>;
+  defaultQuery: string;
 };
 
-function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
+function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
   const [repositories, setRepositories] = useState<string[]>([]);
   const [lockfiles, setLockfiles] = useState<LockfilesMap>({});
-  const [packageQuery, setPackageQuery] = useState('');
+  const [packageQuery, setPackageQuery] = useState(defaultQuery);
   const [isSearching, setIsSearching] = useState(false);
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
@@ -277,6 +278,28 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (packageQuery) {
+      // If query is in the form foo@1.2.3 (perhaps copy-pasted from results)
+      // then replace @ with space (need extra care to handle namespaces or versions
+      // with @ in them)
+      const normalizedQuery = packageQuery.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ');
+
+      if (normalizedQuery !== packageQuery) {
+        setPackageQuery(normalizedQuery);
+      } else {
+        const packageName = packageQuery ? packageQuery.split(' ')[0] : '';
+
+        setSearchResult([]);
+        setIsSearching(true);
+        setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
+
+        // update URL to allow users to share the link
+        history.pushState({}, '', '?' + new URLSearchParams({ q: packageQuery }).toString());
+      }
+    }
+  }, [packageQuery, lockfiles]);
+
   return (
     <>
       <Theme
@@ -326,21 +349,7 @@ function App({ lockfilesUrl, defaultSelectedRepos }: AppProps) {
       )}
 
       <div className="search-bar">
-        <SearchInput
-          onSubmit={(query) => {
-            if (query !== packageQuery) {
-              // If query is in the form foo@1.2.3 (perhaps copy-pasted from results)
-              // then replace @ with space (need extra care to handle namespaces or versions
-              // with @ in them)
-              query = query.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ');
-              const packageName = query ? query.split(' ')[0] : '';
-              setPackageQuery(query);
-              setSearchResult([]);
-              setIsSearching(true);
-              setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
-            }
-          }}
-        />
+        <SearchInput onSubmit={(query) => setPackageQuery(query)} />
         <div className="search-examples">
           <div className="example">{'e.g. react'}</div>
           <div className="example">{'e.g. react ^19.0.0'}</div>

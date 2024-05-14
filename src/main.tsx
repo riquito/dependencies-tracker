@@ -6,6 +6,10 @@ import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App lockfilesUrl={window.lockfilesUrl} defaultSelectedRepos={getCachedFilters()} />
+    <App
+      lockfilesUrl={window.lockfilesUrl}
+      defaultSelectedRepos={getCachedFilters()}
+      defaultQuery={new URLSearchParams(window.location.search).get('q') || ''}
+    />
   </React.StrictMode>
 );
