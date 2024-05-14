@@ -216,13 +216,27 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
 
   useEffect(() => {
     fetchLockfiles(lockfilesUrl).then((lockfiles) => {
-      const repositories = Object.keys(lockfiles);
-      const cleanedSelectedRepos = cleanFilters(selectedRepos, repositories);
       setLockfiles(lockfiles);
-      setRepositories(repositories);
-      setSelectedRepos(cleanedSelectedRepos.size > 0 ? cleanedSelectedRepos : new Set(repositories));
+      setRepositories(Object.keys(lockfiles));
     });
   }, [lockfilesUrl]);
+
+  useEffect(() => {
+    // Remove any previously selected repository that is no longer available
+    const cleanedSelectedRepos = cleanFilters(selectedRepos, repositories);
+    const newSetSelectedRepos = cleanedSelectedRepos.size > 0 ? cleanedSelectedRepos : new Set(repositories);
+
+    const newSetSelectedReposAsArray = Array.from(newSetSelectedRepos.values());
+    newSetSelectedReposAsArray.sort();
+
+    const selectedReposAsArray = Array.from(selectedRepos.values());
+    selectedReposAsArray.sort();
+
+    // Update "selectedRepositories" only if the new set actually differ
+    if (JSON.stringify(newSetSelectedReposAsArray) !== JSON.stringify(selectedReposAsArray)) {
+      setSelectedRepos(newSetSelectedRepos);
+    }
+  }, [repositories, selectedRepos]);
 
   useEffect(() => {
     WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
@@ -279,7 +293,7 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
   }, []);
 
   useEffect(() => {
-    if (packageQuery) {
+    if (packageQuery && Object.keys(lockfiles).length > 0) {
       // If query is in the form foo@1.2.3 (perhaps copy-pasted from results)
       // then replace @ with space (need extra care to handle namespaces or versions
       // with @ in them)
