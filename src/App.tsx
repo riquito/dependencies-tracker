@@ -308,11 +308,32 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
         setIsSearching(true);
         setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
 
-        // update URL to allow users to share the link
-        history.pushState({}, '', '?' + new URLSearchParams({ q: packageQuery }).toString());
+        // update URL to allow users to share the link'
+        const currentQueryInUrl = new URLSearchParams(window.location.search).get('q') || '';
+        if (currentQueryInUrl !== packageQuery) {
+          history.pushState({}, '', '?' + new URLSearchParams({ q: packageQuery }).toString());
+
+          document.title = `Dependencies Tracker - ${packageQuery}`;
+        }
       }
     }
   }, [packageQuery, lockfiles]);
+
+  useEffect(() => {
+    const onPopstate = (event: PopStateEvent) => {
+      const currentQueryInUrl = new URLSearchParams(window.location.search).get('q') || '';
+      setPackageQuery(currentQueryInUrl);
+
+      // XXX should use ref or controlled state
+      const inputElem: HTMLInputElement = document.querySelector('.search-input input')!;
+      inputElem.value = currentQueryInUrl;
+    };
+    window.addEventListener('popstate', onPopstate);
+
+    return () => {
+      window.removeEventListener('popstate', onPopstate);
+    };
+  }, []);
 
   return (
     <>
