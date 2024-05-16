@@ -58,7 +58,15 @@
   margin-top: 1em;
 }
 
-.search-results li {
+.search-results-item {
+  line-height: 1.6em;
+}
+
+.search-results-item ul {
+  margin: 0;
+}
+
+.search-results-item li {
   list-style: disc;
 }
 
@@ -73,6 +81,17 @@
 .search-results-repo-name {
   color: #62a4f9;
   font-weight: 700;
+}
+
+.search-results-repo-link {
+  display: inline-flex;
+  text-decoration: none;
+  vertical-align: middle;
+  margin-left: 0.5em;
+}
+
+.search-results-repo-link > .material-symbols-outlined {
+  font-size: 16px;
 }
 
 .target .target-name {

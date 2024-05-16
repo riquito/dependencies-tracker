@@ -42,6 +42,7 @@ export default defineConfig({
     hexLoader,
     ViteEjsPlugin({
       lockfilesUrl: process.env['DEP_URL'] || '/src/assets/lockfiles.tar.gzip',
+      baseRepoUrl: process.env['DEP_BASE_REPO_URL'] || 'https://github.com',
     }),
   ],
 });

@@ -48,6 +48,7 @@ type LockFileProps = {
   repo: string;
   result: YarnWhyJSONOutput;
   packageName: string;
+  baseRepoUrl: string;
 };
 
 const COLORS = [
@@ -148,7 +149,7 @@ function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTar
   );
 }
 
-function SearchLockFile({ repo, result, packageName }: LockFileProps) {
+function SearchLockFile({ repo, result, packageName, baseRepoUrl }: LockFileProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isTargetPackage = (name: string) => name === packageName;
 
@@ -164,6 +165,9 @@ function SearchLockFile({ repo, result, packageName }: LockFileProps) {
         }}
       >
         {repo}
+        <a className="search-results-repo-link" href={`${baseRepoUrl}/${repo}`} target="_blank">
+          <span className="material-symbols-outlined">open_in_new</span>
+        </a>
       </summary>
       <div ref={ref}>
         <ul>
@@ -198,11 +202,12 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
 
 export type AppProps = {
   lockfilesUrl: string;
+  baseRepoUrl: string;
   defaultSelectedRepos: Set<string>;
   defaultQuery: string;
 };
 
-function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
+function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
   const [repositories, setRepositories] = useState<string[]>([]);
   const [lockfiles, setLockfiles] = useState<LockfilesMap>({});
   const [packageQuery, setPackageQuery] = useState(defaultQuery);
@@ -409,7 +414,13 @@ function App({ lockfilesUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
             </div>
           )}
           {searchResult.map(([repo, result]) => (
-            <SearchLockFile key={repo} repo={repo} result={result} packageName={packageQuery.split(' ')[0]} />
+            <SearchLockFile
+              key={repo}
+              repo={repo}
+              result={result}
+              packageName={packageQuery.split(' ')[0]}
+              baseRepoUrl={baseRepoUrl}
+            />
           ))}
           {isSearching && <div className="search-results-loading">Loading...</div>}
           {!isSearching && searchResult.length === 0 && (

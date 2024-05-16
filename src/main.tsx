@@ -8,6 +8,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App
       lockfilesUrl={window.lockfilesUrl}
+      baseRepoUrl={window.baseRepoUrl}
       defaultSelectedRepos={getCachedFilters()}
       defaultQuery={new URLSearchParams(window.location.search).get('q') || ''}
     />
