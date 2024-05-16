@@ -48,6 +48,7 @@ class ConsoleExhaust extends Fd {
 
 export type YarnWhyJSONOutputLeaf = {
   descriptor: [string, string];
+  version: string;
   children?: YarnWhyJSONOutputLeaf[];
 };
 

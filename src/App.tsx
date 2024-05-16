@@ -89,7 +89,9 @@ function isVisible(el: HTMLElement): boolean {
   return isVisible;
 }
 
-function renderTarget({ name, version }: { name: string; version: string }) {
+function renderTarget(node: YarnWhyJSONOutputLeaf): JSX.Element {
+  const [name, descriptor] = node.descriptor;
+  const version = node.version;
   const color = getColorForVersion(version);
   return (
     <span className="target">
@@ -97,23 +99,26 @@ function renderTarget({ name, version }: { name: string; version: string }) {
       <span className="target-version" style={{ color: `var(--${color})` }}>
         {version}
       </span>
+      <span> (via {descriptor})</span>
     </span>
   );
 }
 
-function renderDescriptor(
-  [name, version]: [string, string],
+function renderDependencyInfo(
+  node: YarnWhyJSONOutputLeaf,
   isTargetPackage: IsTargetPackage,
   repo: string,
   isLeaf: boolean
 ) {
+  const [name, descriptor] = node.descriptor;
+  const version = node.version;
   const id = `${repo}:${name}@${version}`;
-  const text = `${name}@${version}`;
+  const text = `${name}@${version} (via ${descriptor})`;
 
   return (
     <span className={`descriptor`} id={id}>
       {isTargetPackage(name) ? (
-        renderTarget({ name, version })
+        renderTarget(node)
       ) : isLeaf ? (
         <a
           href={`#${id}`}
@@ -143,7 +148,7 @@ type IsTargetPackage = (s: string) => boolean;
 function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTargetPackage, repo: string) {
   return (
     <li key={node.descriptor.join('@')}>
-      {renderDescriptor(node.descriptor, isTargetPackage, repo, !(node.children && node.children.length > 0))}
+      {renderDependencyInfo(node, isTargetPackage, repo, !(node.children && node.children.length > 0))}
       {node.children && <ul>{node.children.map((n) => renderDependencyRow(n, isTargetPackage, repo))}</ul>}
     </li>
   );
