@@ -1,7 +1,10 @@
-Unreleased
+2024-05-16
 
+- More accessible colors for links in dark theme
 - Display both the dependency version and the descriptor
   that brought it in.
+- Display stats about the results of the query
+- Removed debug logs from WASI library
 
 2024-05-15
 
