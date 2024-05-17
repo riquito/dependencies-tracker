@@ -8,6 +8,7 @@ import { fetchLockfiles } from './fetch-lockfiles.ts';
 import './App.css';
 import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts';
 import { Theme, ThemeType, getThemePreference, setThemePreference } from './theme.tsx';
+import { Stats } from './stats.tsx';
 
 const fromHexString = (hexString: string): ArrayBuffer =>
   Uint8Array.from(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
@@ -142,8 +143,6 @@ function renderDependencyInfo(
     </span>
   );
 }
-
-type IsTargetPackage = (s: string) => boolean;
 
 function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTargetPackage, repo: string) {
   return (
@@ -411,13 +410,7 @@ function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: 
           <div>
             Query: <b>{packageQuery}</b>
           </div>
-          {searchResult.length > 0 && (
-            <div className="search-results-count">
-              {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-              <b>{searchResult.reduce((acc, [_, result]) => acc + result.length, 0)}</b> top level dependencies found
-              across <b>{searchResult.length}</b> repositories
-            </div>
-          )}
+          {searchResult.length > 0 && <Stats searchResult={searchResult} packageQuery={packageQuery} />}
           {searchResult.map(([repo, result]) => (
             <SearchLockFile
               key={repo}

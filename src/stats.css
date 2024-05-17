@@ -1,0 +1,32 @@
+.stats {
+  margin-bottom: 1em;
+}
+
+.stats-warning-info {
+  max-width: 400px;
+  font-size: 0.8em;
+}
+
+.stats-occurrences {
+  max-width: 150px;
+}
+
+.stats-occurrences-title {
+  font-weight: bold;
+}
+
+.stats-occurrences-row {
+  display: flex;
+}
+
+.stats-occurrences-cell-occurrences {
+  flex: 0 0 auto;
+  text-align: right;
+  width: 40px;
+  margin-right: 1em;
+}
+
+.stats-occurrences-cell-version {
+  flex: 1 0 auto;
+  text-align: right;
+}

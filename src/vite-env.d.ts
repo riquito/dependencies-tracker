@@ -6,3 +6,5 @@ declare interface Window {
 }
 
 declare type LockfilesMap = Record<string, string>;
+
+declare type IsTargetPackage = (s: string) => boolean;
