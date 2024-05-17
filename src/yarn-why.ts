@@ -83,7 +83,7 @@ export async function yarnWhy({
       err_output = stderr;
     }),
   ];
-  const wasi = new WASI(args, env, fds, { debug: true });
+  const wasi = new WASI(args, env, fds, { debug: false });
 
   const inst = await WebAssembly.instantiate(wasm, {
     wasi_snapshot_preview1: wasi.wasiImport,
