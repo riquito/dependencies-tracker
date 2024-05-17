@@ -2,6 +2,8 @@
 
 - When you load the app with a query set as query parameter,
   the input field contains the query
+- When a user submits a query with a plain version, match
+  the exact version, not the caret version
 
 2024-05-16
 

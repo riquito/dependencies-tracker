@@ -310,7 +310,15 @@ function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: 
       // If query is in the form foo@1.2.3 (perhaps copy-pasted from results)
       // then replace @ with space (need extra care to handle namespaces or versions
       // with @ in them)
-      const normalizedQuery = packageQuery.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ');
+      let normalizedQuery = packageQuery.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ');
+
+      // Since the underlying semver library use cargo semantics ("simple" versions
+      // defaults to caret ^), we normalize to specic version here
+      // e.g. we transform `foo 1.2` into `foo =1.2`
+      const match = /(^[^ ]+) +([0-9][0-9a-zA-Z-_.]?.*)$/.exec(normalizedQuery);
+      if (match) {
+        normalizedQuery = `${match[1]} =${match[2]}`;
+      }
 
       if (normalizedQuery !== packageQuery) {
         setPackageQuery(normalizedQuery);
