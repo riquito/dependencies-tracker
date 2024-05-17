@@ -1,3 +1,8 @@
+2024-05-17
+
+- When you load the app with a query set as query parameter,
+  the input field contains the query
+
 2024-05-16
 
 - More accessible colors for links in dark theme

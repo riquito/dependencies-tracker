@@ -14,10 +14,11 @@ const fromHexString = (hexString: string): ArrayBuffer =>
   Uint8Array.from(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
 
 type SearchInputProps = {
+  defaultValue: string;
   onSubmit: (query: string) => void;
 };
 
-function SearchInput({ onSubmit }: SearchInputProps) {
+function SearchInput({ onSubmit, defaultValue }: SearchInputProps) {
   const ref = useRef<HTMLInputElement>(null);
   return (
     <div className="search-input">
@@ -26,6 +27,7 @@ function SearchInput({ onSubmit }: SearchInputProps) {
         type="text"
         placeholder="Search for dependencies, e.g. react"
         className="input"
+        defaultValue={defaultValue}
         onKeyUp={(ev) => {
           const value = ev.currentTarget.value.trim();
           if (ev.key === 'Enter') {
@@ -396,7 +398,7 @@ function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: 
       )}
 
       <div className="search-bar">
-        <SearchInput onSubmit={(query) => setPackageQuery(query)} />
+        <SearchInput onSubmit={(query) => setPackageQuery(query)} defaultValue={packageQuery} />
         <div className="search-examples">
           <div className="example">{'e.g. react'}</div>
           <div className="example">{'e.g. react ^19.0.0'}</div>
