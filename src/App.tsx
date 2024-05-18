@@ -4,10 +4,9 @@ import { RepoFilter } from './repo-filter';
 
 /* @ts-expect-error typescript cannot understand how we load this file */
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex';
-import { fetchLockfiles } from './fetch-lockfiles.ts';
 import './App.css';
 import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts';
-import { Theme, ThemeType, getThemePreference, setThemePreference } from './theme.tsx';
+import { DefiniteThemeType, Theme, ThemeType, setThemePreference } from './theme.tsx';
 import { Stats } from './stats.tsx';
 
 const fromHexString = (hexString: string): ArrayBuffer =>
@@ -207,15 +206,24 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
 }
 
 export type AppProps = {
-  lockfilesUrl: string;
+  repositories: string[];
+  lockfiles: LockfilesMap;
   baseRepoUrl: string;
   defaultSelectedRepos: Set<string>;
   defaultQuery: string;
+  systemTheme: DefiniteThemeType;
+  defaultTheme: ThemeType;
 };
 
-function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: AppProps) {
-  const [repositories, setRepositories] = useState<string[]>([]);
-  const [lockfiles, setLockfiles] = useState<LockfilesMap>({});
+function App({
+  repositories,
+  lockfiles,
+  baseRepoUrl,
+  defaultSelectedRepos,
+  defaultQuery,
+  systemTheme,
+  defaultTheme,
+}: AppProps) {
   const [packageQuery, setPackageQuery] = useState(defaultQuery);
   const [isSearching, setIsSearching] = useState(false);
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
@@ -223,15 +231,7 @@ function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: 
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState(new Set<string>(defaultSelectedRepos));
-  const [theme, setTheme] = useState<ThemeType>(getThemePreference());
-  const [systemTheme, setSystemTheme] = useState<ThemeType>('dark');
-
-  useEffect(() => {
-    fetchLockfiles(lockfilesUrl).then((lockfiles) => {
-      setLockfiles(lockfiles);
-      setRepositories(Object.keys(lockfiles));
-    });
-  }, [lockfilesUrl]);
+  const [theme, setTheme] = useState<ThemeType>(defaultTheme);
 
   useEffect(() => {
     // Remove any previously selected repository that is no longer available
@@ -276,34 +276,12 @@ function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: 
   }, [wasm, packageQuery, reposWithMaybePackage, lockfiles, selectedRepos]);
 
   useEffect(() => {
-    const effectiveTheme = (theme === 'auto' && systemTheme) || theme;
+    const effectiveTheme: DefiniteThemeType = theme === 'auto' ? systemTheme : theme;
     document.body.classList.toggle('dark-theme', effectiveTheme === 'dark');
     document.body.classList.toggle('light-theme', effectiveTheme === 'light');
 
     document.body.parentElement!.style.colorScheme = effectiveTheme;
   }, [theme, systemTheme]);
-
-  useEffect(() => {
-    if (window.matchMedia) {
-      if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-        setSystemTheme('light');
-      } else {
-        setSystemTheme('dark');
-      }
-    }
-    const onSystemColorSchemePreferenceChanged = (event: MediaQueryListEvent) => {
-      const newColorScheme = event.matches ? 'light' : 'dark';
-      setSystemTheme(newColorScheme);
-    };
-
-    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', onSystemColorSchemePreferenceChanged);
-
-    return () => {
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .removeEventListener('change', onSystemColorSchemePreferenceChanged);
-    };
-  }, []);
 
   useEffect(() => {
     if (packageQuery && Object.keys(lockfiles).length > 0) {

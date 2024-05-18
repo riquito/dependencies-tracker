@@ -1,5 +1,6 @@
 export const Themes = ['light', 'dark', 'auto'] as const;
 export type ThemeType = (typeof Themes)[number];
+export type DefiniteThemeType = 'light' | 'dark';
 
 const THEME_KEY = 'theme-preference';
 
