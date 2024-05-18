@@ -225,7 +225,7 @@ function App({
   defaultTheme,
 }: AppProps) {
   const [packageQuery, setPackageQuery] = useState(defaultQuery);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(defaultQuery !== '');
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
