@@ -368,7 +368,7 @@ function App({ lockfilesUrl, baseRepoUrl, defaultSelectedRepos, defaultQuery }: 
       />
       <h1 className="main-title">
         {/* Icon from https://lucide.dev/icons/microscope */}
-        <img src="./search.svg" className="logo" alt="Dependencies Tracker logo" /> Dependencies Tracker
+        <img src="./search.svg" className="logo" aria-label="Dependencies Tracker logo" /> Dependencies Tracker
       </h1>
 
       <div className="repo-filter-title" style={{ display: filterPanelVisible ? 'none' : 'block' }}>

@@ -5,7 +5,10 @@
 }
 
 .logo {
+  width: 1em;
   height: 1em;
+  /* hide the overflowing alt text if present and the img url is broken  */
+  overflow: hidden;
   /* filter created following https://stackoverflow.com/a/52041765 */
   filter: invert(100%) sepia(0%) saturate(7488%) hue-rotate(72deg) brightness(100%) contrast(97%);
 }
@@ -88,6 +91,8 @@
 
 .search-results-repo-link > .material-symbols-outlined {
   font-size: 16px;
+  width: 16px;
+  overflow: hidden;
 }
 
 .target .target-name {
