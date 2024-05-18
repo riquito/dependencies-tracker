@@ -6,7 +6,7 @@ import { RepoFilter } from './repo-filter';
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex';
 import './App.css';
 import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts';
-import { DefiniteThemeType, Theme, ThemeType, setThemePreference } from './theme.tsx';
+import { DefiniteThemeType, Theme, ThemeType, applyTheme, setThemePreference } from './theme.tsx';
 import { Stats } from './stats.tsx';
 
 const fromHexString = (hexString: string): ArrayBuffer =>
@@ -277,10 +277,7 @@ function App({
 
   useEffect(() => {
     const effectiveTheme: DefiniteThemeType = theme === 'auto' ? systemTheme : theme;
-    document.body.classList.toggle('dark-theme', effectiveTheme === 'dark');
-    document.body.classList.toggle('light-theme', effectiveTheme === 'light');
-
-    document.body.parentElement!.style.colorScheme = effectiveTheme;
+    applyTheme(effectiveTheme);
   }, [theme, systemTheme]);
 
   useEffect(() => {

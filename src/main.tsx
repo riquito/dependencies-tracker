@@ -4,7 +4,7 @@ import App from './App.tsx';
 import { getCachedFilters } from './filters-cache.ts';
 import { fetchLockfiles } from './fetch-lockfiles.ts';
 import './index.css';
-import { ThemeType, DefiniteThemeType, getThemePreference } from './theme.tsx';
+import { ThemeType, DefiniteThemeType, getThemePreference, applyTheme } from './theme.tsx';
 
 // eslint-disable-next-line react-refresh/only-export-components
 function Root({ lockfilesUrl }: { lockfilesUrl: string }) {
@@ -41,7 +41,7 @@ function Root({ lockfilesUrl }: { lockfilesUrl: string }) {
     }
 
     const effectiveTheme: DefiniteThemeType = appTheme === 'auto' ? systemTheme : appTheme;
-    document.body.classList.add(effectiveTheme === 'dark' ? 'dark-theme' : 'light-theme');
+    applyTheme(effectiveTheme);
 
     const onSystemColorSchemePreferenceChanged = (event: MediaQueryListEvent) => {
       const newColorScheme = event.matches ? 'light' : 'dark';
