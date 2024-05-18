@@ -4,6 +4,8 @@
   the input field contains the query
 - When a user submits a query with a plain version, match
   the exact version, not the caret version
+- Preload necessary data before rendering
+- Avoid FOC while loading fonts/images
 
 2024-05-16
 
