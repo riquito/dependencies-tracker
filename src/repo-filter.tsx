@@ -72,6 +72,10 @@ export function RepoFilter(props: RepoFIlterProps) {
             </div>
           );
         })}
+        {repositories.length % 3 !== 0 &&
+          [...Array(3 - (repositories.length % 3))].map((_, idx) => {
+            return <div className="repo-filter-content-item empty" key={`empty-${idx}`}></div>;
+          })}
       </div>
       <button
         className="repo-filter-cancel-btn secondary"

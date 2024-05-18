@@ -3,6 +3,7 @@
   color: black;
   padding: 1em;
   text-align: left;
+  max-width: 600px;
 }
 
 .repo-filter-header h3 {
@@ -21,7 +22,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1em;
-  max-width: 600px;
+  justify-content: space-around;
 }
 
 .repo-filter-content-item {
@@ -35,6 +36,11 @@
   overflow: hidden;
   cursor: pointer;
   border-radius: 0.3em;
+}
+
+.repo-filter-content-item.empty {
+  opacity: 0;
+  cursor: unset;
 }
 
 .repo-filter-content-item:focus-within {
