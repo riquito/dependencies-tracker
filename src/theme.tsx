@@ -13,9 +13,9 @@ export const setThemePreference = (theme: ThemeType) => {
 };
 
 export const applyTheme = (effectiveTheme: DefiniteThemeType) => {
-  document.body.classList.toggle('dark-theme', effectiveTheme === 'dark');
-  document.body.classList.toggle('light-theme', effectiveTheme === 'light');
-  document.body.parentElement!.style.colorScheme = effectiveTheme;
+  document.documentElement.classList.toggle('dark-theme', effectiveTheme === 'dark');
+  document.documentElement.classList.toggle('light-theme', effectiveTheme === 'light');
+  document.documentElement.style.colorScheme = effectiveTheme;
 };
 
 export type ThemeProps = {

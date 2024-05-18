@@ -119,7 +119,9 @@
 .theme-select {
   position: fixed;
   top: 1em;
-  right: 1em;
+  /* We don't simply use right: 1em because this way we avoid */
+  /* the horizontal movement when the scrollbar appears/disappears. */
+  left: calc(100vw - 200px);
   display: flex;
   gap: 1em;
 }

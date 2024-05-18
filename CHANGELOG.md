@@ -1,3 +1,7 @@
+2024-05-18
+
+- Anchor the layout so it doesn't move depending on the content
+
 2024-05-17
 
 - When you load the app with a query set as query parameter,
