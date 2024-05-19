@@ -44,6 +44,16 @@ export function RepoFilter(props: RepoFIlterProps) {
           >
             Cancel
           </button>
+          <button
+            className="repo-filter-apply-btn"
+            disabled={selected.size === 0}
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
+              onChange(selected);
+            }}
+          >
+            Apply changes
+          </button>
         </h3>
       </div>
       <div className="repo-filter-content">
@@ -78,7 +88,7 @@ export function RepoFilter(props: RepoFIlterProps) {
           })}
       </div>
       <button
-        className="repo-filter-cancel-btn secondary"
+        className="repo-filter-cancel-btn secondary bottom"
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
           onChange(new Set([]));
@@ -87,7 +97,7 @@ export function RepoFilter(props: RepoFIlterProps) {
         Cancel
       </button>
       <button
-        className="repo-filter-apply-btn"
+        className="repo-filter-apply-btn bottom"
         disabled={selected.size === 0}
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick={(_: React.MouseEvent<HTMLButtonElement>) => {
