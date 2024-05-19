@@ -1,3 +1,7 @@
+2024-05-19
+
+- Use a favicon visible in dark and light mode
+
 2024-05-18
 
 - Anchor the layout so it doesn't move depending on the content
