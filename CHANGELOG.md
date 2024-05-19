@@ -1,6 +1,9 @@
 2024-05-19
 
 - Use a favicon visible in dark and light mode
+- When we're not searching every repository, highlight
+  that fact in the UI
+- Add an extra "apply" button on top of the filter-repo dialog
 
 2024-05-18
 
