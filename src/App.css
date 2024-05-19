@@ -35,7 +35,7 @@
 .search-input input[type='text'] {
   height: 32px;
   box-sizing: border-box;
-  padding: 0.3em;
+  padding: 10px;
   width: 250px;
 }
 
@@ -49,12 +49,20 @@
   color: #b3b1ae;
 }
 
-.repo-filter-title {
+.repo-filter-desc {
   margin-bottom: 1em;
 }
 
-.repo-filter-title button {
+.repo-filter-desc button {
   margin-left: 1em;
+}
+
+.repo-filter-desc b.repo-filter-customized {
+  color: #dd781f;
+}
+
+.repo-filter-desc button.repo-filter-customized {
+  color: #f37a0f;
 }
 
 .search-results {
@@ -158,4 +166,12 @@
   --palette-7: #810000;
   --palette-8: #0a6303;
   --palette-9: #bd5a37;
+}
+
+.light-theme .repo-filter-desc b.repo-filter-customized {
+  color: #ba5b07;
+}
+
+.light-theme .repo-filter-desc button.repo-filter-customized {
+  color: #964b09;
 }

@@ -346,15 +346,20 @@ function App({
         <img src="./search.svg" className="logo" aria-label="Dependencies Tracker logo" /> Dependencies Tracker
       </h1>
 
-      <div className="repo-filter-title" style={{ display: filterPanelVisible ? 'none' : 'block' }}>
+      <div className="repo-filter-desc" style={{ display: filterPanelVisible ? 'none' : 'block' }}>
         {selectedRepos.size === repositories.length ? (
           'Search in all repositories'
         ) : (
           <>
-            Search in <b>{selectedRepos.size}</b> out of <b>{repositories.length}</b> repositories
+            Search in <b className="repo-filter-customized">{selectedRepos.size}</b> out of <b>{repositories.length}</b>{' '}
+            repositories
           </>
         )}
-        <button id="openFilterPanelButton" onClick={() => setFilterPanelVisible(true)}>
+        <button
+          id="openFilterPanelButton"
+          className={selectedRepos.size !== repositories.length ? 'repo-filter-customized' : ''}
+          onClick={() => setFilterPanelVisible(true)}
+        >
           Show filters panel
         </button>
       </div>

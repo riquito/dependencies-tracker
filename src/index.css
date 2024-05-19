@@ -89,7 +89,12 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+}
+
+select,
+input[type='text'] {
+  border-radius: 8px;
+  padding: 4px;
 }
 
 button:hover {
@@ -98,10 +103,11 @@ button:hover {
   filter: brightness(1.2);
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto Highlight;
-  outline: 4px auto -webkit-focus-ring-color;
+button:focus-visible,
+select:focus-visible,
+input[type='text']:focus-visible {
+  outline: 4px solid #4470d9;
+  border-color: transparent;
 }
 
 button.secondary {

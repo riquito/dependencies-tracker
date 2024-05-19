@@ -44,7 +44,7 @@
 }
 
 .repo-filter-content-item:focus-within {
-  outline: 2px solid #0a0c0c;
+  outline: 4px solid #0a0c0c;
 }
 
 .repo-filter-content-item label {
