@@ -399,8 +399,31 @@ function App({
       {!isSearching && packageQuery.length > 0 && (
         <div className="search-results">
           <div className="search-results-header">
-            <h3>Searched for:</h3>
-            {packageQuery}
+            <div className="search-results-header-title">
+              <h3>Searched for:</h3>
+              {packageQuery}
+            </div>
+            <div className="search-results-header-links">
+              <button
+                className="btn-link copy-search-url"
+                onClick={(ev: React.MouseEvent<HTMLButtonElement>) => {
+                  ev.currentTarget.classList.add('hidden');
+                  document.querySelector('.search-url-copied')!.classList.remove('hidden');
+                  navigator.clipboard.writeText(document.location.href);
+                  setTimeout(() => {
+                    document.querySelector('.search-url-copied')!.classList.add('hidden');
+                    document.querySelector('.copy-search-url')!.classList.remove('hidden');
+                  }, 3000);
+                }}
+              >
+                <span className="material-symbols-outlined">content_copy</span>
+                copy url
+              </button>
+              <span className="search-url-copied hidden">
+                <span className="material-symbols-outlined">check</span>
+                url copied!
+              </span>
+            </div>
           </div>
           {searchResult.length > 0 && <Stats searchResult={searchResult} packageQuery={packageQuery} />}
           {searchResult.map(([repo, result]) => (

@@ -21,7 +21,6 @@
 
 .search-bar {
   text-align: left;
-  margin-bottom: 1em;
   font-size: 18px;
 }
 
@@ -65,10 +64,6 @@
   color: #f37a0f;
 }
 
-.search-results {
-  margin-top: 1em;
-}
-
 .search-results-item {
   line-height: 1.6em;
 }
@@ -83,13 +78,18 @@
 
 .search-results-header {
   display: flex;
+  align-items: center;
+}
+
+.search-results-header-title {
+  display: flex;
   gap: 0.5em;
   align-items: center;
   font-weight: 700;
   font-size: 18px;
 }
 
-.search-results-header h3 {
+.search-results-header-title h3 {
   display: inline;
   color: rgb(223, 210, 113);
   font-size: 18px;
@@ -111,6 +111,26 @@
   font-size: 16px;
   width: 16px;
   overflow: hidden;
+}
+
+button.copy-search-url {
+  display: inline-flex;
+  text-decoration: none;
+  gap: 0.3em;
+}
+
+.search-url-copied {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.6em 1.2em;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+button.copy-search-url.hidden,
+.search-url-copied.hidden {
+  display: none;
 }
 
 .target .target-name {
