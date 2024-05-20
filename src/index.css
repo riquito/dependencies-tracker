@@ -42,6 +42,10 @@ html {
   }
 }
 
+a {
+  padding: 0.1em;
+}
+
 a,
 .btn-link {
   font-weight: 500;
