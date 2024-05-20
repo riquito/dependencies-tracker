@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { YarnWhyJSONOutput, YarnWhyJSONOutputLeaf, yarnWhy } from './yarn-why';
 import { RepoFilter } from './repo-filter';
 
@@ -154,7 +154,7 @@ function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTar
   );
 }
 
-function SearchLockFile({ repo, result, packageName, baseRepoUrl }: LockFileProps) {
+const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFileProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const isTargetPackage = (name: string) => name === packageName;
 
@@ -183,7 +183,7 @@ function SearchLockFile({ repo, result, packageName, baseRepoUrl }: LockFileProp
       </div>
     </details>
   );
-}
+});
 
 /**
  * Check if a package is in the yarn lock file, on best effort basis.

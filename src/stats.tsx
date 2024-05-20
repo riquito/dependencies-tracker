@@ -1,6 +1,6 @@
 import { YarnWhyJSONOutput } from './yarn-why';
 import './stats.css';
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 
 /**
  * Given YarnWhyJSONOutput, it return
@@ -56,7 +56,7 @@ type StatsProps = {
   packageQuery: string;
 };
 
-export function Stats({ searchResult, packageQuery }: StatsProps) {
+export const Stats = memo(({ searchResult, packageQuery }: StatsProps) => {
   const packageName = packageQuery.split(' ')[0];
   const stats = useMemo(() => {
     const isTargetPackage = (name: string) => name === packageName;
@@ -125,4 +125,4 @@ export function Stats({ searchResult, packageQuery }: StatsProps) {
       )}
     </div>
   );
-}
+});

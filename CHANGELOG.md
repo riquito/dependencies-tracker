@@ -6,6 +6,7 @@
 - Add an extra "apply" button on top of the filter-repo dialog
 - Better stats for the search results
 - Use an higher contrast color when blinking items in light theme
+- Performance improvements when closing/opening the filter-repo dialog
 
 2024-05-18
 
