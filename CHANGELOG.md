@@ -4,6 +4,7 @@
 - When we're not searching every repository, highlight
   that fact in the UI
 - Add an extra "apply" button on top of the filter-repo dialog
+- Better stats for the search results
 
 2024-05-18
 

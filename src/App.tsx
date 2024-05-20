@@ -394,11 +394,13 @@ function App({
         </div>
       </div>
 
-      {packageQuery.length > 0 && (
+      {isSearching && <div className="search-results-loading">Loading...</div>}
+
+      {!isSearching && packageQuery.length > 0 && (
         <div className="search-results">
-          <h3 className="search-results-header">Search Results</h3>
-          <div>
-            Query: <b>{packageQuery}</b>
+          <div className="search-results-header">
+            <h3>Searched for:</h3>
+            {packageQuery}
           </div>
           {searchResult.length > 0 && <Stats searchResult={searchResult} packageQuery={packageQuery} />}
           {searchResult.map(([repo, result]) => (
@@ -410,7 +412,6 @@ function App({
               baseRepoUrl={baseRepoUrl}
             />
           ))}
-          {isSearching && <div className="search-results-loading">Loading...</div>}
           {!isSearching && searchResult.length === 0 && (
             <div className="search-results-no-results">No results found</div>
           )}

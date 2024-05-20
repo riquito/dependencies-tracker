@@ -66,39 +66,63 @@ export function Stats({ searchResult, packageQuery }: StatsProps) {
     );
   }, [searchResult, packageName]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const topLevelDependencies = searchResult.reduce((acc, [_, result]) => acc + result.length, 0);
+
   return (
     <div className="stats">
-      {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-      <b>{searchResult.reduce((acc, [_, result]) => acc + result.length, 0)}</b> top level dependencies found across{' '}
-      <b>{searchResult.length}</b> repositories
-      <div>
-        <details>
-          <summary>
-            <b>
-              Found{' '}
-              {Object.keys(stats).length === 1 ? 'only 1 version' : `${Object.keys(stats).length} different versions`}
-            </b>
-          </summary>
-          <div>
-            <div className="stats-warning-info">
-              (the number of occurrences is an estimate since every dependency's subtree is printed just once)
-            </div>
-            <div className="stats-occurrences-title">occurrences / versions</div>
-            <div className="stats-occurrences">
-              {stats.map(([key, value]) => {
-                return (
-                  <div className="stats-occurrences-row" key={key}>
-                    <div className="stats-occurrences-cell-occurrences">{value}</div>
-                    <div className="stats-occurrences-cell-version">
-                      <a href={`${window.location.pathname}?q=${encodeURIComponent(`${packageName} ${key}`)}`}>{key}</a>
+      {searchResult.length === 1 ? (
+        <div>
+          <b>1</b> repository contains matching packages
+        </div>
+      ) : (
+        <div>
+          <b>{searchResult.length}</b> repositories contain matching packages
+        </div>
+      )}
+      {topLevelDependencies === 1 ? (
+        <div>
+          <b>1</b> top level dependency depends on matching packages
+        </div>
+      ) : (
+        <div>
+          <b>{topLevelDependencies}</b> top level dependencies depend on matching packages
+        </div>
+      )}
+      {Object.keys(stats).length === 1 && (
+        <div>
+          <b>1</b> only version found: <b>{stats[0][0]}</b>
+        </div>
+      )}
+      {Object.keys(stats).length > 1 && (
+        <div>
+          <details>
+            <summary>
+              <b>{Object.keys(stats).length}</b> matching versions found
+            </summary>
+            <div>
+              <div className="stats-warning-info">
+                (the number of occurrences is an estimate since every dependency's subtree is printed just once)
+              </div>
+              <div className="stats-occurrences-title">occurrences / versions</div>
+              <div className="stats-occurrences">
+                {stats.map(([key, value]) => {
+                  return (
+                    <div className="stats-occurrences-row" key={key}>
+                      <div className="stats-occurrences-cell-occurrences">{value}</div>
+                      <div className="stats-occurrences-cell-version">
+                        <a href={`${window.location.pathname}?q=${encodeURIComponent(`${packageName} ${key}`)}`}>
+                          {key}
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </details>
-      </div>
+          </details>
+        </div>
+      )}
     </div>
   );
 }

@@ -82,7 +82,17 @@
 }
 
 .search-results-header {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.search-results-header h3 {
+  display: inline;
   color: rgb(223, 210, 113);
+  font-size: 18px;
 }
 
 .search-results-repo-name {
@@ -143,7 +153,7 @@
   color: #686868;
 }
 
-.light-theme .search-results-header {
+.light-theme .search-results-header h3 {
   color: rgb(10, 136, 36);
 }
 
