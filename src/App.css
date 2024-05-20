@@ -119,6 +119,12 @@ button.copy-search-url {
   gap: 0.3em;
 }
 
+button.copy-search-url > .material-symbols-outlined {
+  font-size: 24px;
+  width: 24px;
+  overflow: hidden;
+}
+
 .search-url-copied {
   display: inline-flex;
   align-items: center;
