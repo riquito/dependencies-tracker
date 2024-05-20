@@ -72,7 +72,9 @@ h1 {
 }
 
 summary {
+  display: inline flow-root list-item;
   text-align: left;
+  cursor: pointer;
 }
 
 li {
@@ -102,6 +104,8 @@ button:hover {
   filter: brightness(1.2);
 }
 
+a:focus-visible,
+summary:focus-visible,
 button:focus-visible,
 select:focus-visible,
 input[type='text']:focus-visible {
@@ -139,8 +143,4 @@ button.secondary {
 .light-theme button.secondary:hover {
   /* apply a css filter to make the background color darker */
   filter: brightness(0.9);
-}
-
-summary {
-  cursor: pointer;
 }
