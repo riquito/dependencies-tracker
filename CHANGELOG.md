@@ -1,3 +1,8 @@
+2024-05-20
+
+- Display a skeleton when search is in progress
+- Do not reload the whole page when a version is clicked
+
 2024-05-19
 
 - Use a favicon visible in dark and light mode

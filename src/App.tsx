@@ -296,6 +296,7 @@ function App({
       }
 
       if (normalizedQuery !== packageQuery) {
+        // recursive, it wil trigger this useEffect again
         setPackageQuery(normalizedQuery);
       } else {
         const packageName = packageQuery ? packageQuery.split(' ')[0] : '';
@@ -394,7 +395,19 @@ function App({
         </div>
       </div>
 
-      {isSearching && <div className="search-results-loading">Loading...</div>}
+      {isSearching && (
+        <div className="search-results-skeleton">
+          <div className="search-results-skeleton-bar1" />
+          <div className="search-results-skeleton-bar2" />
+          <div className="search-results-skeleton-list">
+            <div className="search-results-skeleton-item" />
+            <div className="search-results-skeleton-item" />
+            <div className="search-results-skeleton-item" />
+            <div className="search-results-skeleton-item" />
+            <div className="search-results-skeleton-item" />
+          </div>
+        </div>
+      )}
 
       {!isSearching && packageQuery.length > 0 && (
         <div className="search-results">
@@ -431,7 +444,12 @@ function App({
               packageQuery={packageQuery}
               onVersionClick={(version: string): void => {
                 const packageName = packageQuery.split(' ')[0];
-                setPackageQuery(`${packageName} ${version}`);
+                const query = `${packageName} =${version}`;
+                setPackageQuery(`${packageName} =${version}`);
+
+                // XXX should use ref or controlled state
+                const inputElem: HTMLInputElement = document.querySelector('.search-input input')!;
+                inputElem.value = query;
               }}
             />
           )}

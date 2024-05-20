@@ -154,6 +154,48 @@ button.copy-search-url.hidden,
   font-weight: 700;
 }
 
+.search-results-skeleton {
+  display: flex;
+  flex-direction: column;
+  width: 450px;
+  gap: 1em;
+  margin-top: 1em;
+}
+
+.search-results-skeleton-bar1 {
+  height: 28px;
+  width: 70%;
+  flex: 1 0 auto;
+  background-color: darkgray;
+  position: relative;
+  border-radius: 5px;
+}
+
+.search-results-skeleton-bar2 {
+  height: 72px;
+  width: 100%;
+  flex: 1 0 auto;
+  background-color: darkgray;
+  position: relative;
+  border-radius: 5px;
+}
+
+.search-results-skeleton-list {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  gap: 0.3em;
+}
+
+.search-results-skeleton-item {
+  height: 24px;
+  width: 55%;
+  flex: 1 0 auto;
+  background-color: darkgray;
+  position: relative;
+  border-radius: 5px;
+}
+
 .search-results {
   --palette-1: #fa4f42;
   --palette-2: #4caf50;
