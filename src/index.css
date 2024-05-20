@@ -24,10 +24,21 @@ html {
   animation: blinker 1s linear 3;
 }
 
+.light-theme .blink_me {
+  animation: blinker-light 1s linear 3;
+}
+
 @keyframes blinker {
   50% {
     opacity: 0;
     color: gold;
+  }
+}
+
+@keyframes blinker-light {
+  50% {
+    opacity: 0;
+    color: #69006c;
   }
 }
 
