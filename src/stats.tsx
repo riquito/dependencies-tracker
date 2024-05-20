@@ -91,7 +91,10 @@ export const Stats = memo(({ searchResult, packageQuery }: StatsProps) => {
       )}
       {Object.keys(stats).length === 1 && (
         <div>
-          <b>1</b> only version found: <b>{stats[0][0]}</b>
+          <b>1</b> matching version found:{' '}
+          <a href={`${window.location.pathname}?q=${encodeURIComponent(`${packageName} ${stats[0][0]}`)}`}>
+            {stats[0][0]}
+          </a>
         </div>
       )}
       {Object.keys(stats).length > 1 && (
