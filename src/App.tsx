@@ -156,6 +156,7 @@ function renderDependencyRow(node: YarnWhyJSONOutputLeaf, isTargetPackage: IsTar
 
 const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFileProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const isTargetPackage = (name: string) => name === packageName;
 
   return (
@@ -167,6 +168,7 @@ const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFil
           ref.current!.querySelectorAll('.blink_me').forEach((elem) => {
             elem.classList.remove('blink_me');
           });
+          setIsOpen(!isOpen);
         }}
       >
         {repo}
@@ -176,9 +178,10 @@ const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFil
       </summary>
       <div ref={ref}>
         <ul>
-          {result.map((node: YarnWhyJSONOutputLeaf) => {
-            return renderDependencyRow(node, isTargetPackage, repo);
-          })}
+          {isOpen &&
+            result.map((node: YarnWhyJSONOutputLeaf) => {
+              return renderDependencyRow(node, isTargetPackage, repo);
+            })}
         </ul>
       </div>
     </details>

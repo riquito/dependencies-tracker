@@ -2,6 +2,7 @@
 
 - Display a skeleton when search is in progress
 - Do not reload the whole page when a version is clicked
+- [perf] Render subtrees only when expanded
 
 2024-05-19
 
