@@ -400,7 +400,7 @@ function App({
         <div className="search-results">
           <div className="search-results-header">
             <div className="search-results-header-title">
-              <h3>Searched for:</h3>
+              <div className="search-results-header-title-label">Searched for:</div>
               {packageQuery}
             </div>
             <div className="search-results-header-links">
