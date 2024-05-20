@@ -426,6 +426,7 @@ function App({
             </div>
           </div>
           {searchResult.length > 0 && <Stats searchResult={searchResult} packageQuery={packageQuery} />}
+          {searchResult.length > 0 && <div className="search-results-label">Results:</div>}
           {searchResult.map(([repo, result]) => (
             <SearchLockFile
               key={repo}

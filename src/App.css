@@ -64,6 +64,12 @@
   color: #f37a0f;
 }
 
+.search-results-label {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 0.5em;
+}
+
 .search-results-item {
   line-height: 1.6em;
 }
