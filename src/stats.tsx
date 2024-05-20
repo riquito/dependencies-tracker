@@ -54,9 +54,32 @@ function combineStats(stats: Record<string, number>[]): Record<string, number> {
 type StatsProps = {
   searchResult: [string, YarnWhyJSONOutput][];
   packageQuery: string;
+  onVersionClick: (version: string) => void;
 };
 
-export const Stats = memo(({ searchResult, packageQuery }: StatsProps) => {
+function VersionLink({
+  packageName,
+  version,
+  onClick,
+}: {
+  packageName: string;
+  version: string;
+  onClick: (version: string) => void;
+}) {
+  return (
+    <a
+      href={`${window.location.pathname}?q=${encodeURIComponent(`${packageName} ${version}`)}`}
+      onClick={(ev) => {
+        ev.preventDefault();
+        onClick(version);
+      }}
+    >
+      {version}
+    </a>
+  );
+}
+
+export const Stats = memo(({ onVersionClick, searchResult, packageQuery }: StatsProps) => {
   const packageName = packageQuery.split(' ')[0];
   const stats = useMemo(() => {
     const isTargetPackage = (name: string) => name === packageName;
@@ -92,9 +115,7 @@ export const Stats = memo(({ searchResult, packageQuery }: StatsProps) => {
       {Object.keys(stats).length === 1 && (
         <div>
           <b>1</b> matching version found:{' '}
-          <a href={`${window.location.pathname}?q=${encodeURIComponent(`${packageName} ${stats[0][0]}`)}`}>
-            {stats[0][0]}
-          </a>
+          <VersionLink packageName={packageName} onClick={onVersionClick} version={stats[0][0]} />
         </div>
       )}
       {Object.keys(stats).length > 1 && (
@@ -114,9 +135,7 @@ export const Stats = memo(({ searchResult, packageQuery }: StatsProps) => {
                     <div className="stats-occurrences-row" key={key}>
                       <div className="stats-occurrences-cell-occurrences">{value}</div>
                       <div className="stats-occurrences-cell-version">
-                        <a href={`${window.location.pathname}?q=${encodeURIComponent(`${packageName} ${key}`)}`}>
-                          {key}
-                        </a>
+                        <VersionLink packageName={packageName} onClick={onVersionClick} version={key} />
                       </div>
                     </div>
                   );

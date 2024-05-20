@@ -425,7 +425,16 @@ function App({
               </span>
             </div>
           </div>
-          {searchResult.length > 0 && <Stats searchResult={searchResult} packageQuery={packageQuery} />}
+          {searchResult.length > 0 && (
+            <Stats
+              searchResult={searchResult}
+              packageQuery={packageQuery}
+              onVersionClick={(version: string): void => {
+                const packageName = packageQuery.split(' ')[0];
+                setPackageQuery(`${packageName} ${version}`);
+              }}
+            />
+          )}
           {searchResult.length > 0 && <div className="search-results-label">Results:</div>}
           {searchResult.map(([repo, result]) => (
             <SearchLockFile
