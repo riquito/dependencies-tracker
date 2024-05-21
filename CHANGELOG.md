@@ -4,6 +4,7 @@
 - Do not reload the whole page when a version is clicked
 - [perf] Render subtrees only when expanded
 - Add `repos` query parameter to share a query with filtered repos
+- Accept queries without spaces, such as foo>1
 
 2024-05-19
 

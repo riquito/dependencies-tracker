@@ -318,13 +318,19 @@ function App({
       // with @ in them)
       let normalizedQuery = packageQuery.replace(/^(@?[A-Za-z0-9_/-]+)@/, '$1 ');
 
+      // Always add a space before > or < (so we accept e.g. foo>1)
+      normalizedQuery = normalizedQuery.replace(/([<>])/g, ' $1');
+
       // Since the underlying semver library use cargo semantics ("simple" versions
-      // defaults to caret ^), we normalize to specic version here
+      // defaults to caret ^), we normalize to exact version here
       // e.g. we transform `foo 1.2` into `foo =1.2`
       const match = /(^[^ ]+) +([0-9][0-9a-zA-Z-_.]?.*)$/.exec(normalizedQuery);
       if (match) {
         normalizedQuery = `${match[1]} =${match[2]}`;
       }
+
+      // Remove double spaces
+      normalizedQuery = normalizedQuery.replace(/ +/g, ' ');
 
       if (normalizedQuery !== packageQuery) {
         // recursive, it wil trigger this useEffect again
