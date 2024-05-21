@@ -283,6 +283,7 @@ function App({
 
   useEffect(() => {
     if (packageQuery && wasm && reposWithMaybePackage.length > 0) {
+      setIsSearching(true);
       Promise.all(
         reposWithMaybePackage
           .filter((repo) => selectedRepos.has(repo))
@@ -329,7 +330,6 @@ function App({
         const packageName = packageQuery ? packageQuery.split(' ')[0] : '';
 
         setSearchResult([]);
-        setIsSearching(true);
         setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
       }
     }
