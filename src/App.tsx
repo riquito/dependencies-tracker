@@ -245,8 +245,10 @@ function App({
   const [theme, setTheme] = useState<ThemeType>(defaultTheme);
 
   useEffect(() => {
-    WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
-  }, []);
+    if (!wasm) {
+      WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
+    }
+  }, [wasm]);
 
   useEffect(() => {
     (async () => {
