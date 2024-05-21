@@ -3,6 +3,7 @@
 - Display a skeleton when search is in progress
 - Do not reload the whole page when a version is clicked
 - [perf] Render subtrees only when expanded
+- Add `repos` query parameter to share a query with filtered repos
 
 2024-05-19
 

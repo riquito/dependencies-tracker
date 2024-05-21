@@ -5,9 +5,10 @@ import { RepoFilter } from './repo-filter';
 /* @ts-expect-error typescript cannot understand how we load this file */
 import yarnWhyData from './assets/yarn-why.wasm?raw-hex';
 import './App.css';
-import { cleanFilters, deleteCachedFilters, setCachedFilters } from './filters-cache.ts';
+import { deleteCachedFilters, setCachedFilters } from './filters-cache.ts';
 import { DefiniteThemeType, Theme, ThemeType, applyTheme, setThemePreference } from './theme.tsx';
 import { Stats } from './stats.tsx';
+import { sha256 } from './utils.ts';
 
 const fromHexString = (hexString: string): ArrayBuffer =>
   Uint8Array.from(hexString.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)));
@@ -208,8 +209,14 @@ function getLockfilesWithMaybePackage(lockFiles: LockfilesMap, packageName: stri
   });
 }
 
+type QueryParams = {
+  q: string;
+  repos?: string;
+};
+
 export type AppProps = {
   repositories: string[];
+  repoHashes: Record<string, string>;
   lockfiles: LockfilesMap;
   baseRepoUrl: string;
   defaultSelectedRepos: Set<string>;
@@ -220,6 +227,7 @@ export type AppProps = {
 
 function App({
   repositories,
+  repoHashes,
   lockfiles,
   baseRepoUrl,
   defaultSelectedRepos,
@@ -237,25 +245,39 @@ function App({
   const [theme, setTheme] = useState<ThemeType>(defaultTheme);
 
   useEffect(() => {
-    // Remove any previously selected repository that is no longer available
-    const cleanedSelectedRepos = cleanFilters(selectedRepos, repositories);
-    const newSetSelectedRepos = cleanedSelectedRepos.size > 0 ? cleanedSelectedRepos : new Set(repositories);
-
-    const newSetSelectedReposAsArray = Array.from(newSetSelectedRepos.values());
-    newSetSelectedReposAsArray.sort();
-
-    const selectedReposAsArray = Array.from(selectedRepos.values());
-    selectedReposAsArray.sort();
-
-    // Update "selectedRepositories" only if the new set actually differ
-    if (JSON.stringify(newSetSelectedReposAsArray) !== JSON.stringify(selectedReposAsArray)) {
-      setSelectedRepos(newSetSelectedRepos);
-    }
-  }, [repositories, selectedRepos]);
-
-  useEffect(() => {
     WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const params: QueryParams = {
+        q: packageQuery,
+      };
+
+      if (selectedRepos.size > 0 && selectedRepos.size !== repositories.length) {
+        const fullHashes = await Promise.all(Array.from(selectedRepos).map((repo) => sha256(repo)));
+        const shortHashes = fullHashes.map((x) => x.slice(0, 7));
+        shortHashes.sort();
+
+        params.repos = shortHashes.join(',');
+      }
+
+      const currentParams = new URLSearchParams(window.location.search);
+      currentParams.sort();
+      const currentParamsAsString = currentParams.toString();
+
+      const newParams = new URLSearchParams(params);
+      newParams.sort();
+      const newParamsAsString = newParams.toString();
+
+      if (currentParamsAsString !== newParamsAsString) {
+        // update URL to allow users to share the link
+        history.pushState({}, '', '?' + newParamsAsString);
+        // Note: it may be that title has to be set after pushState to be effective
+        document.title = `Dependencies Tracker - ${packageQuery} - ${params.repos ? selectedRepos.size : 'all'} repos`;
+      }
+    })();
+  }, [packageQuery, selectedRepos, repositories]);
 
   useEffect(() => {
     if (packageQuery && wasm && reposWithMaybePackage.length > 0) {
@@ -307,14 +329,6 @@ function App({
         setSearchResult([]);
         setIsSearching(true);
         setReposWithMaybePackage(getLockfilesWithMaybePackage(lockfiles, packageName));
-
-        // update URL to allow users to share the link'
-        const currentQueryInUrl = new URLSearchParams(window.location.search).get('q') || '';
-        if (currentQueryInUrl !== packageQuery) {
-          history.pushState({}, '', '?' + new URLSearchParams({ q: packageQuery }).toString());
-
-          document.title = `Dependencies Tracker - ${packageQuery}`;
-        }
       }
     }
   }, [packageQuery, lockfiles]);
@@ -322,8 +336,27 @@ function App({
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onPopstate = (_: PopStateEvent) => {
-      const currentQueryInUrl = new URLSearchParams(window.location.search).get('q') || '';
+      const currentParams = new URLSearchParams(window.location.search);
+      const currentQueryInUrl = currentParams.get('q') || '';
+
+      const currentRepoHashesInUrl = currentParams.get('repos') || '';
+
+      const newSelectedRepos = new Set<string>();
+      currentRepoHashesInUrl.split(',').forEach((repoHash) => {
+        if (repoHashes[repoHash]) {
+          newSelectedRepos.add(repoHashes[repoHash]);
+        }
+      });
+
       setPackageQuery(currentQueryInUrl);
+      setFilterPanelVisible(false);
+      setIsSearching(false);
+
+      if (newSelectedRepos.size > 0) {
+        setSelectedRepos(newSelectedRepos);
+      } else {
+        setSelectedRepos(new Set(repositories));
+      }
 
       // XXX should use ref or controlled state
       const inputElem: HTMLInputElement = document.querySelector('.search-input input')!;
@@ -334,7 +367,7 @@ function App({
     return () => {
       window.removeEventListener('popstate', onPopstate);
     };
-  }, []);
+  }, [repoHashes, repositories]);
 
   return (
     <>

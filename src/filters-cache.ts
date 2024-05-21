@@ -26,7 +26,7 @@ function intersection<T>(setA: Set<T>, setB: Set<T>): Set<T> {
   return _intersection;
 }
 
-// Filters may refers to no-more-existing repositories (you never know)
-export function cleanFilters(cachedFilters: Set<string>, repositories: string[]): Set<string> {
-  return intersection(cachedFilters, new Set(repositories));
+// `desiredRepositories` may refer to no-more-existing repositories (you never know)
+export function keepOnlyValidRepositories(repositoriesSubset: Set<string>, allRepositories: Set<string>): Set<string> {
+  return intersection(repositoriesSubset, allRepositories);
 }
