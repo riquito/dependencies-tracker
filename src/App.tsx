@@ -292,12 +292,15 @@ function App({
               return [repo, output];
             })
           )
-      ).then((pairs: [string, YarnWhyJSONOutput | null][]) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
-        setSearchResult(pairsRepoMatches);
-        setIsSearching(false);
-      });
+      )
+        .then((pairs: [string, YarnWhyJSONOutput | null][]) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const pairsRepoMatches = pairs.filter(([_, output]) => output !== null) as [string, YarnWhyJSONOutput][];
+          setSearchResult(pairsRepoMatches);
+        })
+        .finally(() => {
+          setIsSearching(false);
+        });
     } else if (reposWithMaybePackage.length === 0) {
       setIsSearching(false);
     }
