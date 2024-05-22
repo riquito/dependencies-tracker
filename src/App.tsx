@@ -169,10 +169,14 @@ const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFil
           ref.current!.querySelectorAll('.blink_me').forEach((elem) => {
             elem.classList.remove('blink_me');
           });
-          setIsOpen(!isOpen);
         }}
       >
-        {repo}
+        <span
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          onClick={(_) => setIsOpen(!isOpen)}
+        >
+          {repo}
+        </span>
         <a className="search-results-repo-link" href={`${baseRepoUrl}/${repo}`} target="_blank">
           <span className="material-symbols-outlined">open_in_new</span>
         </a>

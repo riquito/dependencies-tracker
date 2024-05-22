@@ -1,3 +1,9 @@
+2024-05-21
+
+- Ensure that we compile the was module once
+- Fix a bug that prevented opening a version tree after clicking
+  the external-repository url
+
 2024-05-20
 
 - Display a skeleton when search is in progress
