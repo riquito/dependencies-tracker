@@ -239,16 +239,18 @@ function App({
   const [isSearching, setIsSearching] = useState(defaultQuery !== '');
   const [reposWithMaybePackage, setReposWithMaybePackage] = useState<string[]>([]);
   const [wasm, setWasm] = useState<WebAssembly.Module>();
+  const [isWasmLoading, setIsWasmLoading] = useState(false);
   const [searchResult, setSearchResult] = useState<[string, YarnWhyJSONOutput][]>([]);
   const [filterPanelVisible, setFilterPanelVisible] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState(new Set<string>(defaultSelectedRepos));
   const [theme, setTheme] = useState<ThemeType>(defaultTheme);
 
   useEffect(() => {
-    if (!wasm) {
+    if (!wasm && !isWasmLoading) {
+      setIsWasmLoading(true);
       WebAssembly.compile(fromHexString(yarnWhyData)).then(setWasm).catch(console.error);
     }
-  }, [wasm]);
+  }, [wasm, isWasmLoading]);
 
   useEffect(() => {
     (async () => {
