@@ -108,7 +108,7 @@
 .search-results ul > li:last-child::before {
   position: absolute;
   height: 100%;
-  left: -33px;
+  left: -32px;
   box-sizing: border-box;
   border-top: 1px solid var(--tree-bar-bg-color);
   background: var(--bg-color);
@@ -120,6 +120,14 @@
   font-size: 18px;
   gap: 10px;
   cursor: pointer;
+}
+
+.search-results {
+  font-size: 18px;
+}
+
+.search-results .material-symbols-outlined {
+  font-size: 18px;
 }
 
 .search-results ul li {
@@ -288,6 +296,20 @@ button.copy-search-url.hidden,
   font-weight: 700;
 }
 
+.version-text {
+  display: flex;
+  gap: 0.3em;
+}
+
+.via-descriptor .parens {
+  font-weight: 700;
+  color: #6296ab;
+}
+
+.target-version + .via-descriptor {
+  margin-left: 0.3em;
+}
+
 .search-results-skeleton {
   display: flex;
   flex-direction: column;
@@ -397,4 +419,8 @@ button.copy-search-url.hidden,
 
 .light-theme .repo-filter-desc button.repo-filter-customized {
   color: #964b09;
+}
+
+.light-theme .via-descriptor .parens {
+  color: black;
 }

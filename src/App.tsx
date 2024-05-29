@@ -103,7 +103,24 @@ function renderTarget(node: YarnWhyJSONOutputLeaf): JSX.Element {
       <span className="target-version" style={{ color: `var(--${color})` }}>
         {version}
       </span>
-      <span> (via {descriptor})</span>
+      <span className="via-descriptor">
+        <span className="parens">(</span>
+        {descriptor}
+        <span className="parens">)</span>
+      </span>
+    </span>
+  );
+}
+
+function VersionText({ name, version, descriptor }: { name: string; version: string; descriptor: string }) {
+  return (
+    <span className="version-text">
+      <span className="version-label">{`${name}@${version}`}</span>
+      <span className="via-descriptor">
+        <span className="parens">(</span>
+        via {descriptor}
+        <span className="parens">)</span>
+      </span>
     </span>
   );
 }
@@ -126,7 +143,6 @@ function DependencyInfo({
   const [name, descriptor] = node.descriptor;
   const version = node.version;
   const id = `${repo}:${name}@${version}`;
-  const text = `${name}@${version} (via ${descriptor})`;
 
   return (
     <span className={`descriptor ${isLeaf ? 'leaf' : ''}`} id={id}>
@@ -150,7 +166,7 @@ function DependencyInfo({
               }
             }}
           >
-            {text}
+            <VersionText name={name} version={version} descriptor={descriptor} />
           </a>
         </span>
       ) : (
@@ -158,7 +174,7 @@ function DependencyInfo({
           <span className={`material-symbols-outlined ${isOpen ? '' : 'closed'}`}>
             {isOpen ? 'indeterminate_check_box' : 'add_box'}
           </span>
-          <span>{text}</span>
+          <VersionText name={name} version={version} descriptor={descriptor} />
         </span>
       )}
     </span>
