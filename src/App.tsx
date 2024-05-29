@@ -313,21 +313,20 @@ const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFil
   const isTargetPackage = (name: string) => name === packageName;
 
   return (
-    <details className="search-results-item">
+    <details className="search-results-item" open={isOpen}>
       <summary
         className="search-results-repo-name"
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        onClick={(_) => {
+        onClick={(ev) => {
+          ev.preventDefault();
+          setIsOpen(!isOpen);
+
           ref.current!.querySelectorAll('.blink_me').forEach((elem) => {
             elem.classList.remove('blink_me');
           });
         }}
       >
-        <span
-          className="search-results-repo-name-text"
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          onClick={(_) => setIsOpen(!isOpen)}
-        >
+        <span className="search-results-repo-name-text">
           <span className="material-symbols-outlined">{isOpen ? 'arrow_drop_down' : 'arrow_right'}</span>
           {repo}
         </span>
