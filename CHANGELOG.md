@@ -1,3 +1,7 @@
+2024-05-28
+
+- every dependency node can now be collapsed
+
 2024-05-21
 
 - Ensure that we compile the was module once

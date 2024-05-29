@@ -2,6 +2,9 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+
+  --tree-bar-bg-color: white;
+  --tree-bar-bg-color-on-hover: #cb8326;
 }
 
 .logo {
@@ -64,6 +67,120 @@
   color: #f37a0f;
 }
 
+.search-results-vertical-bar {
+  position: absolute;
+  width: 1em;
+  height: 100%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  margin-left: -40px;
+}
+
+/* vertical bar below every open/close [-] symbol */
+.search-results-vertical-bar > .bar-child {
+  width: 1px;
+  height: 100%;
+  background-color: var(--tree-bar-bg-color);
+}
+
+.search-results-vertical-bar:hover > .bar-child {
+  background-color: var(--tree-bar-bg-color-on-hover);
+}
+
+/* horizontal bar next to every row */
+.search-results ul > li::before {
+  position: absolute;
+  content: '';
+  height: 1px;
+  background: var(--tree-bar-bg-color);
+  width: 24px;
+  left: -32px;
+  top: 13px;
+}
+
+/* block the same color of the background to
+   cover the extra part of the vertical lines
+   once you reached the last child.
+   It overrides the regular (non last) horizontal
+   bar, so it provides one.
+*/
+.search-results ul > li:last-child::before {
+  position: absolute;
+  height: 100%;
+  left: -32px;
+  box-sizing: border-box;
+  border-top: 1px solid var(--tree-bar-bg-color);
+  background: var(--bg-color);
+}
+
+.search-results-dependency.has-subtree {
+  display: inline-flex;
+  align-items: center;
+  font-size: 18px;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.search-results {
+  font-size: 18px;
+}
+
+.search-results .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.search-results ul li {
+  position: relative;
+}
+
+.search-results .first-level > ul > li::before {
+  display: none;
+}
+
+.search-results .first-level > ul > .search-results-vertical-bar {
+  display: none;
+}
+
+.dependency-block {
+  position: relative;
+  height: auto;
+  overflow: hidden;
+  transform: scaleY(1);
+  /* 0.3s is not respecting the actual height, so
+     taller blocks close "slower"
+  */
+  transition: max-height 0.3s ease-in-out;
+}
+
+.dependency-block.closed {
+  max-height: 0 !important;
+}
+
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+    height: auto;
+  }
+  90% {
+    opacity: 0;
+    height: auto;
+  }
+  100% {
+    opacity: 0;
+    height: 0;
+  }
+}
+
+.search-results-dependency.has-subtree > .material-symbols-outlined {
+  font-size: 16px;
+  padding-top: 3px;
+}
+
+.search-results-dependency.has-subtree > .material-symbols-outlined.closed {
+  color: var(--tree-bar-bg-color-on-hover);
+}
+
 .search-results-label {
   font-weight: 700;
   font-size: 18px;
@@ -74,12 +191,23 @@
   line-height: 1.6em;
 }
 
+.search-results-item .first-level > ul {
+  padding-left: 1em;
+}
+.search-results-item .first-level > ul::before {
+  display: none;
+}
+
 .search-results-item ul {
   margin: 0;
 }
 
 .search-results-item li {
-  list-style: disc;
+  list-style: none;
+}
+
+.search-results-item .dependency-row.closed > ul {
+  display: none;
 }
 
 .search-results-header {
@@ -102,8 +230,16 @@
 }
 
 .search-results-repo-name {
+  display: flex;
   color: #62a4f9;
   font-weight: 700;
+  list-style: none;
+  align-items: end;
+}
+
+.search-results-repo-name-text {
+  display: inline-flex;
+  align-items: center;
 }
 
 .search-results-repo-link {
@@ -145,6 +281,12 @@ button.copy-search-url.hidden,
   display: none;
 }
 
+.search-results-dependency.target,
+.search-results-dependency.already-rendered {
+  display: flex;
+  align-items: center;
+}
+
 .target .target-name {
   color: #0ed45b;
   font-weight: 700;
@@ -152,6 +294,20 @@ button.copy-search-url.hidden,
 
 .target .target-version {
   font-weight: 700;
+}
+
+.version-text {
+  display: flex;
+  gap: 0.3em;
+}
+
+.via-descriptor .parens {
+  font-weight: 700;
+  color: #6296ab;
+}
+
+.target-version + .via-descriptor {
+  margin-left: 0.3em;
 }
 
 .search-results-skeleton {
@@ -252,10 +408,19 @@ button.copy-search-url.hidden,
   --palette-9: #bd5a37;
 }
 
+.light-theme .search-results {
+  --tree-bar-bg-color: black;
+  --tree-bar-bg-color-on-hover: #b85600;
+}
+
 .light-theme .repo-filter-desc b.repo-filter-customized {
   color: #ba5b07;
 }
 
 .light-theme .repo-filter-desc button.repo-filter-customized {
   color: #964b09;
+}
+
+.light-theme .via-descriptor .parens {
+  color: black;
 }
