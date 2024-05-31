@@ -234,7 +234,7 @@
   color: #62a4f9;
   font-weight: 700;
   list-style: none;
-  align-items: end;
+  align-items: baseline;
 }
 
 .search-results-repo-name-text {
