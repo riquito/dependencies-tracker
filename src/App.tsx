@@ -125,178 +125,184 @@ function VersionText({ name, version, descriptor }: { name: string; version: str
   );
 }
 
-function DependencyInfo({
-  node,
-  isTargetPackage,
-  repo,
-  isLeaf,
-  isOpen,
-  onClick,
-}: {
-  node: YarnWhyJSONOutputLeaf;
-  isTargetPackage: IsTargetPackage;
-  repo: string;
-  isLeaf: boolean;
-  isOpen: boolean;
-  onClick: () => void;
-}) {
-  const [name, descriptor] = node.descriptor;
-  const version = node.version;
-  const id = `${repo}:${name}@${version}`;
-
-  return (
-    <span className={`descriptor ${isLeaf ? 'leaf' : ''}`} id={id}>
-      {isTargetPackage(name) ? (
-        renderTarget(node)
-      ) : isLeaf ? (
-        <span style={{ display: 'flex', alignItems: 'center' }}>
-          <span className="material-symbols-outlined">switch_access_shortcut</span>
-          <a
-            className="search-results-dependency already-rendered"
-            href={`#${id}`}
-            onClick={(ev) => {
-              const targetId = ev.currentTarget.getAttribute('href')!.slice(1);
-              const anchor = document.getElementById(targetId)!;
-              anchor.classList.remove('blink_me');
-              anchor.offsetHeight; // force repaint to trigger repaint and set `animation-name: none;`
-              anchor.classList.add('blink_me');
-
-              if (isVisible(anchor)) {
-                ev.preventDefault();
-              }
-            }}
-          >
-            <VersionText name={name} version={version} descriptor={descriptor} />
-          </a>
-        </span>
-      ) : (
-        <span className="search-results-dependency has-subtree" onClick={onClick}>
-          <span className={`material-symbols-outlined ${isOpen ? '' : 'closed'}`}>
-            {isOpen ? 'indeterminate_check_box' : 'add_box'}
-          </span>
-          <VersionText name={name} version={version} descriptor={descriptor} />
-        </span>
-      )}
-    </span>
-  );
-}
-
-const DependencyRow = forwardRef<
-  HTMLLIElement,
-  {
-    isLeaf: boolean;
-    isLastRow: boolean;
-    isLastSubtree: boolean;
-    repo: string;
+const DependencyInfo = memo(
+  ({
+    node,
+    isTargetPackage,
+    repo,
+    isLeaf,
+    isOpen,
+    onClick,
+  }: {
     node: YarnWhyJSONOutputLeaf;
     isTargetPackage: IsTargetPackage;
-    updateClientRect: null | ((v: DOMRect) => void);
+    repo: string;
+    isLeaf: boolean;
+    isOpen: boolean;
+    onClick: () => void;
+  }) => {
+    const [name, descriptor] = node.descriptor;
+    const version = node.version;
+    const id = `${repo}:${name}@${version}`;
+
+    return (
+      <span className={`descriptor ${isLeaf ? 'leaf' : ''}`} id={id}>
+        {isTargetPackage(name) ? (
+          renderTarget(node)
+        ) : isLeaf ? (
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            <span className="material-symbols-outlined">switch_access_shortcut</span>
+            <a
+              className="search-results-dependency already-rendered"
+              href={`#${id}`}
+              onClick={(ev) => {
+                const targetId = ev.currentTarget.getAttribute('href')!.slice(1);
+                const anchor = document.getElementById(targetId)!;
+                anchor.classList.remove('blink_me');
+                anchor.offsetHeight; // force repaint to trigger repaint and set `animation-name: none;`
+                anchor.classList.add('blink_me');
+
+                if (isVisible(anchor)) {
+                  ev.preventDefault();
+                }
+              }}
+            >
+              <VersionText name={name} version={version} descriptor={descriptor} />
+            </a>
+          </span>
+        ) : (
+          <span className="search-results-dependency has-subtree" onClick={onClick}>
+            <span className={`material-symbols-outlined ${isOpen ? '' : 'closed'}`}>
+              {isOpen ? 'indeterminate_check_box' : 'add_box'}
+            </span>
+            <VersionText name={name} version={version} descriptor={descriptor} />
+          </span>
+        )}
+      </span>
+    );
   }
->(({ node, updateClientRect, isTargetPackage, repo, isLeaf, isLastRow, isLastSubtree }, outerRef) => {
-  const [innerBlockIsCollapsed, setInnerBlockIsCollapsed] = useState(false);
-  const innerRef = useRef<HTMLLIElement>(null);
-  useImperativeHandle(outerRef, () => innerRef.current!, []);
+);
 
-  useEffect(() => {
-    if (innerRef && innerRef.current && updateClientRect) {
-      const rect = innerRef.current.getBoundingClientRect();
-      updateClientRect(rect);
+const DependencyRow = memo(
+  forwardRef<
+    HTMLLIElement,
+    {
+      isLeaf: boolean;
+      isLastRow: boolean;
+      isLastSubtree: boolean;
+      repo: string;
+      node: YarnWhyJSONOutputLeaf;
+      isTargetPackage: IsTargetPackage;
+      updateClientRect: null | ((v: DOMRect) => void);
     }
-  }, [innerRef, updateClientRect]);
+  >(({ node, updateClientRect, isTargetPackage, repo, isLeaf, isLastRow, isLastSubtree }, outerRef) => {
+    const [innerBlockIsCollapsed, setInnerBlockIsCollapsed] = useState(false);
+    const innerRef = useRef<HTMLLIElement>(null);
+    useImperativeHandle(outerRef, () => innerRef.current!, []);
 
-  return (
-    <li
-      ref={innerRef}
-      className={`dependency-row ${isLeaf ? '' : 'has-subtree'} ${isLastSubtree ? 'is-last-subtree' : ''} ${isLastRow ? 'is-last' : ''} `}
-    >
-      <DependencyInfo
-        node={node}
-        isTargetPackage={isTargetPackage}
-        repo={repo}
-        isLeaf={isLeaf}
-        isOpen={!innerBlockIsCollapsed}
-        onClick={() => setInnerBlockIsCollapsed(!innerBlockIsCollapsed)}
-      />
-      {node.children && node.children.length > 0 && (
-        <DependencyBlock
-          nodes={node.children}
+    useEffect(() => {
+      if (innerRef && innerRef.current && updateClientRect) {
+        const rect = innerRef.current.getBoundingClientRect();
+        updateClientRect(rect);
+      }
+    }, [innerRef, updateClientRect]);
+
+    return (
+      <li
+        ref={innerRef}
+        className={`dependency-row ${isLeaf ? '' : 'has-subtree'} ${isLastSubtree ? 'is-last-subtree' : ''} ${isLastRow ? 'is-last' : ''} `}
+      >
+        <DependencyInfo
+          node={node}
           isTargetPackage={isTargetPackage}
           repo={repo}
-          onTreeBarClick={() => setInnerBlockIsCollapsed(!innerBlockIsCollapsed)}
+          isLeaf={isLeaf}
           isOpen={!innerBlockIsCollapsed}
+          onClick={() => setInnerBlockIsCollapsed(!innerBlockIsCollapsed)}
         />
-      )}
-    </li>
-  );
-});
-
-function DependencyBlock({
-  nodes,
-  isTargetPackage,
-  repo,
-  onTreeBarClick,
-  isOpen,
-}: {
-  nodes: YarnWhyJSONOutput;
-  isTargetPackage: IsTargetPackage;
-  repo: string;
-  onTreeBarClick: () => void;
-  isOpen: boolean;
-}) {
-  const ref = useRef<HTMLUListElement>(null);
-  const vertBarRef = useRef<HTMLDivElement>(null);
-  let lastSubtreeIdx = nodes ? findLastSubtreeIdx(nodes) : -1;
-  lastSubtreeIdx = nodes.length - 1;
-  const lastSubtreeRef = useRef<HTMLLIElement>(null);
-  // It may seem useless, but it triggers the render of the parent
-  const [, setLastSubtreeClientRect] = useState<DOMRect | null>(null);
-  const [maxHeight, setMaxHeight] = useState('fit-content');
-
-  useEffect(() => {
-    if (lastSubtreeRef.current && vertBarRef.current) {
-      //vertBarRef.current.style.height = `${lastSubtreeRef.current.offsetTop + 14}px`;
-
-      if (ref.current?.clientHeight) {
-        // set max height so that the linear transformation has something to work with
-        setMaxHeight(`${ref.current?.clientHeight}px`);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastSubtreeRef.current, vertBarRef.current, ref.current]);
-
-  return (
-    <ul className={`dependency-block ${isOpen ? '' : 'closed'}`} ref={ref} style={{ maxHeight }}>
-      <div
-        className="search-results-vertical-bar"
-        onClick={(ev) => {
-          ev.stopPropagation();
-          onTreeBarClick();
-        }}
-      >
-        <div className="bar-child" ref={vertBarRef} />
-      </div>
-      {nodes.map((node, i, all) => {
-        const isLastRow = i === all.length - 1;
-        const isLastSubtree = i === lastSubtreeIdx;
-
-        const isLeaf = !node.children || node.children.length === 0;
-        return (
-          <DependencyRow
-            isLeaf={isLeaf}
-            isLastRow={isLastRow}
-            isLastSubtree={isLastSubtree}
-            ref={isLastSubtree ? lastSubtreeRef : undefined}
-            key={node.descriptor.join('@')}
-            node={node}
+        {node.children && node.children.length > 0 && (
+          <DependencyBlock
+            nodes={node.children}
             isTargetPackage={isTargetPackage}
             repo={repo}
-            updateClientRect={isLastSubtree ? setLastSubtreeClientRect : null}
+            onTreeBarClick={() => setInnerBlockIsCollapsed(!innerBlockIsCollapsed)}
+            isOpen={!innerBlockIsCollapsed}
           />
-        );
-      })}
-    </ul>
-  );
-}
+        )}
+      </li>
+    );
+  })
+);
+
+const DependencyBlock = memo(
+  ({
+    nodes,
+    isTargetPackage,
+    repo,
+    onTreeBarClick,
+    isOpen,
+  }: {
+    nodes: YarnWhyJSONOutput;
+    isTargetPackage: IsTargetPackage;
+    repo: string;
+    onTreeBarClick: () => void;
+    isOpen: boolean;
+  }) => {
+    const ref = useRef<HTMLUListElement>(null);
+    const vertBarRef = useRef<HTMLDivElement>(null);
+    let lastSubtreeIdx = nodes ? findLastSubtreeIdx(nodes) : -1;
+    lastSubtreeIdx = nodes.length - 1;
+    const lastSubtreeRef = useRef<HTMLLIElement>(null);
+    // It may seem useless, but it triggers the render of the parent
+    const [, setLastSubtreeClientRect] = useState<DOMRect | null>(null);
+    const [maxHeight, setMaxHeight] = useState('fit-content');
+
+    useEffect(() => {
+      if (lastSubtreeRef.current && vertBarRef.current) {
+        //vertBarRef.current.style.height = `${lastSubtreeRef.current.offsetTop + 14}px`;
+
+        if (ref.current?.clientHeight) {
+          // set max height so that the linear transformation has something to work with
+          setMaxHeight(`${ref.current?.clientHeight}px`);
+        }
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [lastSubtreeRef.current, vertBarRef.current, ref.current]);
+
+    return (
+      <ul className={`dependency-block ${isOpen ? '' : 'closed'}`} ref={ref} style={{ maxHeight }}>
+        <div
+          className="search-results-vertical-bar"
+          onClick={(ev) => {
+            ev.stopPropagation();
+            onTreeBarClick();
+          }}
+        >
+          <div className="bar-child" ref={vertBarRef} />
+        </div>
+        {nodes.map((node, i, all) => {
+          const isLastRow = i === all.length - 1;
+          const isLastSubtree = i === lastSubtreeIdx;
+
+          const isLeaf = !node.children || node.children.length === 0;
+          return (
+            <DependencyRow
+              isLeaf={isLeaf}
+              isLastRow={isLastRow}
+              isLastSubtree={isLastSubtree}
+              ref={isLastSubtree ? lastSubtreeRef : undefined}
+              key={node.descriptor.join('@')}
+              node={node}
+              isTargetPackage={isTargetPackage}
+              repo={repo}
+              updateClientRect={isLastSubtree ? setLastSubtreeClientRect : null}
+            />
+          );
+        })}
+      </ul>
+    );
+  }
+);
 
 function findLastSubtreeIdx(node: YarnWhyJSONOutput): number {
   for (let i = node.length - 1; i >= 0; i--) {

@@ -1,7 +1,8 @@
 2024-05-30
 
-- fixed a bug preventing the opening of a repo in a new tab
-- realigned repo icons
+- Fixed a bug preventing the opening of a repo in a new tab
+- Realigned repo icons
+- Performance optimizations
 
 2024-05-28
 
