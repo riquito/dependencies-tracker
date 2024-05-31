@@ -309,6 +309,7 @@ function findLastSubtreeIdx(node: YarnWhyJSONOutput): number {
 
 const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFileProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const linkRepo = useRef<HTMLAnchorElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const isTargetPackage = (name: string) => name === packageName;
 
@@ -318,6 +319,12 @@ const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFil
         className="search-results-repo-name"
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         onClick={(ev) => {
+          if (linkRepo.current!.contains(ev.target as Node)) {
+            // Opening a new tab to watch the repo
+            return;
+          }
+
+          // Toggling the tree
           ev.preventDefault();
           setIsOpen(!isOpen);
 
@@ -330,7 +337,7 @@ const SearchLockFile = memo(({ repo, result, packageName, baseRepoUrl }: LockFil
           <span className="material-symbols-outlined">{isOpen ? 'arrow_drop_down' : 'arrow_right'}</span>
           {repo}
         </span>
-        <a className="search-results-repo-link" href={`${baseRepoUrl}/${repo}`} target="_blank">
+        <a ref={linkRepo} className="search-results-repo-link" href={`${baseRepoUrl}/${repo}`} target="_blank">
           <span className="material-symbols-outlined">open_in_new</span>
         </a>
       </summary>

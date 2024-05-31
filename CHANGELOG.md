@@ -1,3 +1,8 @@
+2024-05-30
+
+- fixed a bug preventing the opening of a repo in a new tab
+- realigned repo icons
+
 2024-05-28
 
 - every dependency node can now be collapsed
